@@ -1,0 +1,7 @@
+D:\repos\C#\cs_nn_fm\bin\Debug\cs_nn_fm.exe.config
+D:\repos\C#\cs_nn_fm\bin\Debug\cs_nn_fm.exe
+D:\repos\C#\cs_nn_fm\bin\Debug\cs_nn_fm.pdb
+D:\repos\C#\cs_nn_fm\obj\Debug\cs_nn_fm.csprojAssemblyReference.cache
+D:\repos\C#\cs_nn_fm\obj\Debug\cs_nn_fm.csproj.CoreCompileInputs.cache
+D:\repos\C#\cs_nn_fm\obj\Debug\cs_nn_fm.exe
+D:\repos\C#\cs_nn_fm\obj\Debug\cs_nn_fm.pdb
