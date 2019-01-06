@@ -20,25 +20,62 @@ namespace cs_nn_fm {
             _numHidden = numHidden;
             _numOutput = numOutput;
             // init predictor
-            this._inputs = new double[numInput];
-            this._hiddens = new double[numHidden];
-            this._outputs = new double[numOutput];
+            _inputs = new double[numInput];
+            _hiddens = new double[numHidden];
+            _outputs = new double[numOutput];
             // init weights
-            this.ih_weights = MakeMatrix(numInput, numHidden, 0.0);
-            this._hoWeights = MakeMatrix(numHidden, numOutput, 0.0);
-            this._hBiases = new double[numHidden];
-            this._oBiases = new double[numOutput];
-            // init rnd
-            this._rnd = new Random(rndSeed);
-            // all weights and biases
+            ih_weights = Helper.MakeMatrix(numInput, numHidden, 0.0);
+            _hoWeights = Helper.MakeMatrix(numHidden, numOutput, 0.0);
+            _hBiases = new double[numHidden];
+            _oBiases = new double[numOutput];
+
+            _rnd = new Random(rndSeed);// init rnd
+            InitializeWeights();// all weights and biases
+
         }
 
         // helper methods
-        public void SetWeight (double[] weights) { }
+        public void InitializeWeights()
+        {
+            var numOfWeights = (_numInput * _numHidden) + _numHidden + (_numHidden * _numOutput) + _numOutput;
+            var initialWeights = new double[numOfWeights];
+            var lo = -0.001;
+            var hi = 0.001;
+            for (var i = 0; i < initialWeights.Length; i++)
+            {
+                initialWeights[i] = lo + (hi - lo) * _rnd.NextDouble(); // set weihts -0.001-0.001(lo-hi)
+            }
+            SetWeight(initialWeights);
+        }
+
+        public void SetWeight(double[] weights)
+        {
+            // copy serialized weights and biases into separate weights[] array
+            var numOfWeights = (_numInput * _numHidden) + _numHidden + (_numHidden * _numOutput) + _numOutput;
+            if (numOfWeights != weights.Length)
+            {
+                throw new Exception("Bad weights array in SetWeights");
+            }
+
+            var w = 0;
+            for (int i = 0; i < _numInput; ++i)
+            for (int j = 0; j < _numHidden; ++j)
+                ih_weights[i][j] = weights[w++];
+
+            for (int j = 0; j < _numHidden; ++j)
+                _hBiases[j] = weights[w++];
+
+            for (int j = 0; j < _numHidden; ++j)
+            for (int k = 0; k < _numOutput; ++k)
+                _hoWeights[j][k] = weights[w++];
+
+            for (int k = 0; k < _numOutput; ++k)
+                _oBiases[k] = weights[w++]; // 
+        }
         public double[] GetWeights () {
-            var numWeights = (_numInput * _numHidden) + _numHidden + (_numHidden * _numOutput) + _numOutput;
-            var res = new double[numWeights];
-            //i-h weighs + h biases + h-o weights + o hiases (order)
+            var numOfWeights = (_numInput * _numHidden) + _numHidden + (_numHidden * _numOutput) + _numOutput;
+            var res = new double[numOfWeights];
+            //i-h weighs + h biases + h-o weights + o biases (order)
             var w = 0;
             for (int i = 0; i < _numInput; ++i)
                 for (int j = 0; j < _numHidden; ++j)
@@ -61,18 +98,18 @@ namespace cs_nn_fm {
             var oSums = new double[_numOutput];
 
             for (int i = 0; i < _numInput; i++) {
-                this._inputs[i] = x_values[i]; // copy independent vars into input nodes
+                _inputs[i] = x_values[i]; // copy independent vars into input nodes
             }
             for (int j = 0; j < _numHidden; j++)
                 for (int i = 0; i < _numInput; i++) {
-                    hSums[j] += this._inputs[i] * this.ih_weights[i][j]; // full-connect network
+                    hSums[j] += _inputs[i] * ih_weights[i][j]; // full-connect network
                 }
             // add the bias
             for (int j = 0; j < _numHidden; j++)
-                hSums[j] += this._hBiases[j];
+                hSums[j] += _hBiases[j];
             //activation
             for (int j = 0; j < _numHidden; j++) {
-                this._hiddens[j] = Activation.HyperTan (hSums[j]);
+                _hiddens[j] = Activation.HyperTan (hSums[j]);
             }
             for (int k = 0; k < _numOutput; k++)
                 for (int j = 0; j < _numHidden; j++) {
@@ -82,31 +119,17 @@ namespace cs_nn_fm {
                 oSums[k] += _oBiases[k];
             }
             // no softmax activation in regression applied. Just copy
-            Array.Copy (oSums, this._outputs, _outputs.Length);
+            Array.Copy (oSums, _outputs, _outputs.Length);
             double[] resRes = new double[_numOutput];
-            Array.Copy (this._outputs, resRes, resRes.Length); // copy res_res to output[]
+            Array.Copy (_outputs, resRes, resRes.Length); // copy res_res to output[]
             return resRes;
-        }
-
-        private static double[][] MakeMatrix (int rows, int cols, double init_val) //helper method
-        {
-            var res = new double[rows][];
-            for (int r = 0; r < res.Length; r++) {
-                res[r] = new double[cols];
-            }
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    res[i][j] = init_val;
-                }
-            }
-            return res;
         }
         public double[] Train (double[][] train_data, int max_epochs, double lr, double momentum) {
             // back-prop specific arrays
-            var hoGrads = MakeMatrix (_numHidden, _numOutput, 0.0); // hidden-output grad
+            var hoGrads = Helper.MakeMatrix(_numHidden, _numOutput, 0.0); // hidden-output grad
             var obGrads = new double[_numOutput]; // output bias grad
 
-            var ihGrad = MakeMatrix (_numInput, _numHidden, 0.0); // input-hidden grad
+            var ihGrad = Helper.MakeMatrix(_numInput, _numHidden, 0.0); // input-hidden grad
             var hbGrad = new double[_numHidden]; // hidden-bias grad
 
             // signal
@@ -114,10 +137,10 @@ namespace cs_nn_fm {
             var hSignals = new double[_numHidden];
 
             //backprop-momentum specific array
-            var ihPrevWeightsDelta = MakeMatrix (_numInput, _numHidden, 0.0);
+            var ihPrevWeightsDelta = Helper.MakeMatrix(_numInput, _numHidden, 0.0);
             var hPrevBiasesDelta = new double[_numHidden];
-            var hoPrevWeightsDelta = MakeMatrix (_numHidden, _numOutput, 0.0);
-            var oPrevBiasisDelta = new double[_numOutput];
+            var hoPrevWeightsDelta = Helper.MakeMatrix(_numHidden, _numOutput, 0.0);
+            var oPrevBiasesDelta = new double[_numOutput];
             // train NN using lr and momentum
             var epoch = 0;
             var xValues = new double[_numInput]; // input vals
@@ -128,13 +151,13 @@ namespace cs_nn_fm {
                 sequence[i] = i;
             }
 
-            var errInterval = max_epochs / 10; // interval to check validation data
+            var errInterval = max_epochs / 50; // interval to check validation data
             while (epoch < max_epochs) { // every epoch
                 epoch++;
                 if (epoch % errInterval == 0 && epoch < max_epochs) {
                     // check err
-                    var trainErr = 0.0;
-                    System.Console.WriteLine ("epoch= " + epoch + "training error = " + trainErr.ToString ("F4"));
+                    var trainErr = Error(train_data);
+                    Console.WriteLine ("epoch= " + epoch + " training error = " + trainErr.ToString ("F4"));
                 }
                 Shuffle (sequence); // shuffle the order
 
@@ -172,7 +195,7 @@ namespace cs_nn_fm {
                     // 4. compute input-hidden weights grads
                     for (int i = 0; i < _numInput; i++) {
                         for (int j = 0; j < _numHidden; j++) {
-                            ihGrad[i][j] = ih_weights[i][j] * _inputs[i];
+                            ihGrad[i][j] = hSignals[j] * _inputs[i];
                         }
                     }
                     // 4.b compute input-hidden biases grads
@@ -210,12 +233,12 @@ namespace cs_nn_fm {
                     for (int k = 0; k < _numOutput; k++) {
                         var delta = obGrads[k] * lr;
                         obGrads[k] += delta;
-                        obGrads[k] += oPrevBiasisDelta[k] * momentum;
-                        oPrevBiasisDelta[k] = delta;
+                        obGrads[k] += oPrevBiasesDelta[k] * momentum;
+                        oPrevBiasesDelta[k] = delta;
                     }
                 } //each training item
             } // end while(each epoch)
-            var bestWeights = this.GetWeights ();
+            var bestWeights = GetWeights();
             return bestWeights;
         }
 
@@ -235,7 +258,7 @@ namespace cs_nn_fm {
             for (int i = 0; i < data.Length; i++) {
                 Array.Copy (data[i], xValues, _numInput);
                 Array.Copy (data[i], _numInput, tValues, 0, _numOutput);
-                var yValues = this.ComputeOutputs (xValues);
+                var yValues = ComputeOutputs (xValues);
                 for (int j = 0; j < _numOutput; j++) {
                     var err = tValues[j] - yValues[j]; // calc
                     sumSquaredErr += Math.Pow (err, 2);
