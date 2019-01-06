@@ -1,30 +1,30 @@
 ﻿using System;
 
-namespace ann {
+namespace cs_nn_fm {
     class Program {
         static void Main (string[] args) {
             Console.WriteLine ("NN Regression for predicting sin(x) begin:");
             // create training data 
-            int num_items = 100;
-            var train_data = new double[num_items][];
+            const int numItems = 100;
+            var trainData = new double[numItems][];
             var rnd = new Random (1);
-            for (int i = 0; i < num_items; i++) {
+            for (int i = 0; i < numItems; i++) {
                 double x = 6.4 * rnd.NextDouble ();
-                double sin_x = Math.Sin (x);
-                train_data[i] = new double[] { x, sin_x };
+                double sinX = Math.Sin (x);
+                trainData[i] = new double[] { x, sinX };
             }
             System.Console.WriteLine ("\nTraining data:");
-            HelperClass.ShowMatrix (train_data, 10, 4, true);
+            HelperClass.ShowMatrix (trainData, 10, 4, true);
             // create NN 
-            var num_input = 1;
-            var num_hidden = 12;
-            var num_output = 1;
-            var rnd_seed = 0;
-            System.Console.WriteLine ("\n Creating a " + num_input + "-" + num_hidden + "-" + num_output + " regression neural network");
-            var nn = new NeutralNetwork (num_input, num_hidden, num_output, rnd_seed);
-            var max_epochs = 1000;
-            var lr = 0.004;
-            var momentum = 0.001; // need more test
+            const int numInput = 1;
+            var numHidden = 12;
+            var numOutput = 1;
+            var rndSeed = 0;
+            System.Console.WriteLine ("\n Creating a " + numInput + "-" + numHidden + "-" + numOutput + " regression neural network");
+            var nn = new NeutralNetwork (numInput, numHidden, numOutput, rndSeed);
+            const int max_epochs = 1000;
+            const double lr = 0.004;
+            const double momentum = 0.001; // need more test
             Console.WriteLine ("\nSetting maxEpochs = " + max_epochs);
             Console.WriteLine ("Setting learnRate = " + lr.ToString ("F4"));
             Console.WriteLine ("Setting momentum  = " + momentum.ToString ("F4"));

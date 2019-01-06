@@ -1,7 +1,8 @@
 using System;
-namespace ann {
+
+namespace cs_nn_fm {
     public class HelperClass {
-        public static void showVector (double[] vector, int decimals, int line_len, bool new_line) {
+        public static void ShowVector (double[] vector, int decimals, int line_len, bool new_line) {
             for (int i = 0; i < vector.Length; i++) {
                 if (i % line_len == 0 && i > 0) // avoid the state 
                     System.Console.WriteLine ("");
@@ -25,11 +26,11 @@ namespace ann {
             }
             if (numRows < matrix.Length) {
                 System.Console.WriteLine (". . .");
-                int last_row = matrix.Length - 1;
+                int lastRow = matrix.Length - 1;
                 if (indices)
-                    Console.Write ("[" + last_row.ToString ().PadLeft (len) + "]");
-                for (int j = 0; j < matrix[last_row].Length; j++) {
-                    var v = matrix[last_row][j];
+                    Console.Write ("[" + lastRow.ToString ().PadLeft (len) + "]");
+                for (int j = 0; j < matrix[lastRow].Length; j++) {
+                    var v = matrix[lastRow][j];
                     if (v >= 0.0)
                         System.Console.Write ("  ");
                     System.Console.Write (v.ToString ("F" + decimals) + "  ");;

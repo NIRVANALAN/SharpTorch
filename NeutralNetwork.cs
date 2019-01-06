@@ -1,76 +1,91 @@
 using System;
 
-namespace ann {
+namespace cs_nn_fm {
     public class NeutralNetwork {
-        private int num_input;
-        private int num_hidden;
-        private int num_output;
-        private int rnd_seed;
-        private double[] inputs; // input nodes
-        private double[] hiddens;
-        private double[] outputs;
+        private int _numInput;
+        private int _numHidden;
+        private int _numOutput;
+        private double[] _inputs; // input nodes
+        private double[] _hiddens;
+        private double[] _outputs;
         private double[][] ih_weights; // Input-hidden weights
-        private double[] h_biases; // Input-hidden weights
-        private double[][] ho_weights; // hidden-output weights
-        private double[] o_biases;
-        private Random rnd;
-        public NeutralNetwork (int num_input, int num_hidden, int num_output, int seed) {
-            this.num_input = num_input;
-            
+        private double[] _hBiases; // Input-hidden weights
+        private double[][] _hoWeights; // hidden-output weights
+        private double[] _oBiases;
+        private Random _rnd;
+
+        public NeutralNetwork(int numInput, int numHidden, int numOutput, int rndSeed)
+        {
+            _numInput = numInput;
+            _numHidden = numHidden;
+            _numOutput = numOutput;
+            // init predictor
+            this._inputs = new double[numInput];
+            this._hiddens = new double[numHidden];
+            this._outputs = new double[numOutput];
+            // init weights
+            this.ih_weights = MakeMatrix(numInput, numHidden, 0.0);
+            this._hoWeights = MakeMatrix(numHidden, numOutput, 0.0);
+            this._hBiases = new double[numHidden];
+            this._oBiases = new double[numOutput];
+            // init rnd
+            this._rnd = new Random(rndSeed);
+            // all weights and biases
         }
+
         // helper methods
         public void SetWeight (double[] weights) { }
         public double[] GetWeights () {
-            var num_weights = (num_input * num_hidden) + num_hidden + (num_hidden * num_output) + num_output;
-            var res = new double[num_weights];
+            var numWeights = (_numInput * _numHidden) + _numHidden + (_numHidden * _numOutput) + _numOutput;
+            var res = new double[numWeights];
             //i-h weighs + h biases + h-o weights + o hiases (order)
             var w = 0;
-            for (int i = 0; i < num_input; ++i)
-                for (int j = 0; j < num_hidden; ++j)
+            for (int i = 0; i < _numInput; ++i)
+                for (int j = 0; j < _numHidden; ++j)
                     res[w++] = ih_weights[i][j];
 
-            for (int j = 0; j < num_hidden; ++j)
-                res[w++] = h_biases[j];
+            for (int j = 0; j < _numHidden; ++j)
+                res[w++] = _hBiases[j];
 
-            for (int j = 0; j < num_hidden; ++j)
-                for (int k = 0; k < num_output; ++k)
-                    res[w++] = ho_weights[j][k];
+            for (int j = 0; j < _numHidden; ++j)
+                for (int k = 0; k < _numOutput; ++k)
+                    res[w++] = _hoWeights[j][k];
 
-            for (int k = 0; k < num_output; ++k)
-                res[w++] = o_biases[k];
-            return outputs; // tmp
+            for (int k = 0; k < _numOutput; ++k)
+                res[w++] = _oBiases[k];
+            return _outputs; // tmp
         }
         public double[] ComputeOutputs (double[] x_values) {
             // preliminary values
-            var h_sums = new double[num_hidden]; // scratch array
-            var o_sums = new double[num_output];
+            var hSums = new double[_numHidden]; // scratch array
+            var oSums = new double[_numOutput];
 
-            for (int i = 0; i < num_input; i++) {
-                this.inputs[i] = x_values[i]; // copy independent vars into input nodes
+            for (int i = 0; i < _numInput; i++) {
+                this._inputs[i] = x_values[i]; // copy independent vars into input nodes
             }
-            for (int j = 0; j < num_hidden; j++)
-                for (int i = 0; i < num_input; i++) {
-                    h_sums[j] += this.inputs[i] * this.ih_weights[i][j]; // full-connect network
+            for (int j = 0; j < _numHidden; j++)
+                for (int i = 0; i < _numInput; i++) {
+                    hSums[j] += this._inputs[i] * this.ih_weights[i][j]; // full-connect network
                 }
             // add the bias
-            for (int j = 0; j < num_hidden; j++)
-                h_sums[j] += this.h_biases[j];
+            for (int j = 0; j < _numHidden; j++)
+                hSums[j] += this._hBiases[j];
             //activation
-            for (int j = 0; j < num_hidden; j++) {
-                this.hiddens[j] = Activation.HyperTan (h_sums[j]);
+            for (int j = 0; j < _numHidden; j++) {
+                this._hiddens[j] = Activation.HyperTan (hSums[j]);
             }
-            for (int k = 0; k < num_output; k++)
-                for (int j = 0; j < num_hidden; j++) {
-                    o_sums[k] += hiddens[j] * ho_weights[j][k];
+            for (int k = 0; k < _numOutput; k++)
+                for (int j = 0; j < _numHidden; j++) {
+                    oSums[k] += _hiddens[j] * _hoWeights[j][k];
                 }
-            for (int k = 0; k < num_output; k++) {
-                o_sums[k] += o_biases[k];
+            for (int k = 0; k < _numOutput; k++) {
+                oSums[k] += _oBiases[k];
             }
             // no softmax activation in regression applied. Just copy
-            Array.Copy (o_sums, this.outputs, outputs.Length);
-            double[] res_res = new double[num_output];
-            Array.Copy (this.outputs, res_res, res_res.Length); // copy res_res to output[]
-            return res_res;
+            Array.Copy (oSums, this._outputs, _outputs.Length);
+            double[] resRes = new double[_numOutput];
+            Array.Copy (this._outputs, resRes, resRes.Length); // copy res_res to output[]
+            return resRes;
         }
 
         private static double[][] MakeMatrix (int rows, int cols, double init_val) //helper method
@@ -88,125 +103,125 @@ namespace ann {
         }
         public double[] Train (double[][] train_data, int max_epochs, double lr, double momentum) {
             // back-prop specific arrays
-            var ho_grads = MakeMatrix (num_hidden, num_output, 0.0); // hidden-output grad
-            var ob_grads = new double[num_output]; // output bias grad
+            var hoGrads = MakeMatrix (_numHidden, _numOutput, 0.0); // hidden-output grad
+            var obGrads = new double[_numOutput]; // output bias grad
 
-            var ih_grad = MakeMatrix (num_input, num_hidden, 0.0); // input-hidden grad
-            var hb_grad = new double[num_hidden]; // hidden-bias grad
+            var ihGrad = MakeMatrix (_numInput, _numHidden, 0.0); // input-hidden grad
+            var hbGrad = new double[_numHidden]; // hidden-bias grad
 
             // signal
-            var o_signals = new double[num_output]; // signals == gradients w/o associated input terms
-            var h_signals = new double[num_hidden];
+            var oSignals = new double[_numOutput]; // signals == gradients w/o associated input terms
+            var hSignals = new double[_numHidden];
 
             //backprop-momentum specific array
-            var ih_prev_weights_delta = MakeMatrix (num_input, num_hidden, 0.0);
-            var h_prev_biases_delta = new double[num_hidden];
-            var ho_prev_weights_delta = MakeMatrix (num_hidden, num_output, 0.0);
-            var o_prev_biasis_delta = new double[num_output];
+            var ihPrevWeightsDelta = MakeMatrix (_numInput, _numHidden, 0.0);
+            var hPrevBiasesDelta = new double[_numHidden];
+            var hoPrevWeightsDelta = MakeMatrix (_numHidden, _numOutput, 0.0);
+            var oPrevBiasisDelta = new double[_numOutput];
             // train NN using lr and momentum
             var epoch = 0;
-            var x_values = new double[num_input]; // input vals
-            var t_values = new double[num_output]; // target vals
+            var xValues = new double[_numInput]; // input vals
+            var tValues = new double[_numOutput]; // target vals
 
             var sequence = new int[train_data.Length];
             for (int i = 0; i < sequence.Length; i++) {
                 sequence[i] = i;
             }
 
-            var err_intercal = max_epochs / 10; // interval to check validation data
+            var errInterval = max_epochs / 10; // interval to check validation data
             while (epoch < max_epochs) { // every epoch
                 epoch++;
-                if (epoch % err_intercal == 0 && epoch < max_epochs) {
+                if (epoch % errInterval == 0 && epoch < max_epochs) {
                     // check err
-                    var train_err = 0.0;
-                    System.Console.WriteLine ("epoch= " + epoch + "training error = " + train_err.ToString ("F4"));
+                    var trainErr = 0.0;
+                    System.Console.WriteLine ("epoch= " + epoch + "training error = " + trainErr.ToString ("F4"));
                 }
-                shuffle (sequence); // shuffle the order
+                Shuffle (sequence); // shuffle the order
 
                 for (int ii = 0; ii < train_data.Length; ii++) {
                     int idx = sequence[ii];
-                    Array.Copy (train_data[idx], x_values, num_input);
-                    Array.Copy (train_data[idx], num_input, t_values, 0, num_output);
-                    ComputeOutputs (x_values); // res_outupt has been copied to output[]
+                    Array.Copy (train_data[idx], xValues, _numInput);
+                    Array.Copy (train_data[idx], _numInput, tValues, 0, _numOutput);
+                    ComputeOutputs (xValues); // res_outupt has been copied to output[]
 
                     // i=inputs j=hidden(s) k=outputs
                     // 1. compute output nodes signals
-                    for (int k = 0; k < num_output; k++) {
+                    for (int k = 0; k < _numOutput; k++) {
                         var derivatives = 1.0; // dummy
-                        o_signals[k] = (t_values[k] - outputs[k]) * derivatives;
+                        oSignals[k] = (tValues[k] - _outputs[k]) * derivatives;
                     }
                     // 2. compute h-to-o weights gradients using output signals
-                    for (int j = 0; j < num_hidden; j++) {
-                        for (int k = 0; k < num_output; k++) {
-                            ho_grads[j][k] = o_signals[k] * hiddens[j];
+                    for (int j = 0; j < _numHidden; j++) {
+                        for (int k = 0; k < _numOutput; k++) {
+                            hoGrads[j][k] = oSignals[k] * _hiddens[j];
                         }
                     }
                     // 2'. compute the output biases grads using output signals
-                    for (int k = 0; k < num_output; k++) {
-                        ob_grads[k] = o_signals[k] * 1.0; // dummy
+                    for (int k = 0; k < _numOutput; k++) {
+                        obGrads[k] = oSignals[k] * 1.0; // dummy
                     }
                     // 3.comput hidden nodes signals
-                    for (int j = 0; j < num_hidden; j++) {
+                    for (int j = 0; j < _numHidden; j++) {
                         var sum = 0.0;
-                        for (int k = 0; k < num_output; k++) {
-                            sum += o_signals[k] * ho_weights[j][k];
+                        for (int k = 0; k < _numOutput; k++) {
+                            sum += oSignals[k] * _hoWeights[j][k];
                         }
-                        var derivatives = (1 + hiddens[j]) * (1 - hiddens[j]); // for tanh
-                        h_signals[j] = sum * derivatives;
+                        var derivatives = (1 + _hiddens[j]) * (1 - _hiddens[j]); // for tanh
+                        hSignals[j] = sum * derivatives;
                     }
                     // 4. compute input-hidden weights grads
-                    for (int i = 0; i < num_input; i++) {
-                        for (int j = 0; j < num_hidden; j++) {
-                            ih_grad[i][j] = ih_weights[i][j] * inputs[i];
+                    for (int i = 0; i < _numInput; i++) {
+                        for (int j = 0; j < _numHidden; j++) {
+                            ihGrad[i][j] = ih_weights[i][j] * _inputs[i];
                         }
                     }
                     // 4.b compute input-hidden biases grads
-                    for (int j = 0; j < num_hidden; j++) {
-                        hb_grad[j] = h_signals[j] * 1.0; // dummy 1.0 input
+                    for (int j = 0; j < _numHidden; j++) {
+                        hbGrad[j] = hSignals[j] * 1.0; // dummy 1.0 input
                     }
                     // ========begin update here==========
                     //1. update input-hidden weights
-                    for (int i = 0; i < num_input; i++) {
-                        for (int j = 0; j < num_hidden; j++) {
-                            var delta = lr * ih_grad[i][j];
+                    for (int i = 0; i < _numInput; i++) {
+                        for (int j = 0; j < _numHidden; j++) {
+                            var delta = lr * ihGrad[i][j];
                             ih_weights[i][j] += delta;
                             // momentum involved
-                            ih_weights[i][j] += ih_prev_weights_delta[i][j] * momentum;
-                            ih_prev_weights_delta[i][j] = delta;
+                            ih_weights[i][j] += ihPrevWeightsDelta[i][j] * momentum;
+                            ihPrevWeightsDelta[i][j] = delta;
                         }
                     }
                     //2. update hidden biases
-                    for (int j = 0; j < num_hidden; j++) {
-                        var delta = hb_grad[j] * lr;
-                        h_biases[j] += delta;
-                        h_biases[j] += h_prev_biases_delta[j] * momentum;
-                        h_prev_biases_delta[j] = delta;
+                    for (int j = 0; j < _numHidden; j++) {
+                        var delta = hbGrad[j] * lr;
+                        _hBiases[j] += delta;
+                        _hBiases[j] += hPrevBiasesDelta[j] * momentum;
+                        hPrevBiasesDelta[j] = delta;
                     }
                     //3.update hidden-output weights
-                    for (int j = 0; j < num_hidden; j++) {
-                        for (int k = 0; k < num_output; k++) {
-                            var delta = ho_grads[j][k] * lr;
-                            ho_weights[j][k] += delta;
-                            ho_weights[j][k] += ho_prev_weights_delta[j][k] * momentum;
-                            ho_prev_weights_delta[j][k] = delta;
+                    for (int j = 0; j < _numHidden; j++) {
+                        for (int k = 0; k < _numOutput; k++) {
+                            var delta = hoGrads[j][k] * lr;
+                            _hoWeights[j][k] += delta;
+                            _hoWeights[j][k] += hoPrevWeightsDelta[j][k] * momentum;
+                            hoPrevWeightsDelta[j][k] = delta;
                         }
                     }
                     //4.update output biases
-                    for (int k = 0; k < num_output; k++) {
-                        var delta = ob_grads[k] * lr;
-                        ob_grads[k] += delta;
-                        ob_grads[k] += o_prev_biasis_delta[k] * momentum;
-                        o_prev_biasis_delta[k] = delta;
+                    for (int k = 0; k < _numOutput; k++) {
+                        var delta = obGrads[k] * lr;
+                        obGrads[k] += delta;
+                        obGrads[k] += oPrevBiasisDelta[k] * momentum;
+                        oPrevBiasisDelta[k] = delta;
                     }
                 } //each training item
             } // end while(each epoch)
-            var best_weights = this.GetWeights ();
-            return best_weights;
+            var bestWeights = this.GetWeights ();
+            return bestWeights;
         }
 
-        private void shuffle (int[] sequence) {
+        private void Shuffle (int[] sequence) {
             for (int i = 0; i < sequence.Length; i++) {
-                var r = rnd.Next (i, sequence.Length);
+                var r = _rnd.Next (i, sequence.Length);
                 var tmp = sequence[r];
                 sequence[r] = sequence[i];
                 sequence[i] = tmp;
@@ -214,19 +229,19 @@ namespace ann {
         }
         private double Error (double[][] data) {
             // MSE : average squared error per training item
-            var sum_squared_err = 0.0;
-            var x_values = new double[num_input]; // intput x(first input_num vals in train_data)
-            var t_values = new double[num_output]; // output y(last num_output vals in train_data)
+            var sumSquaredErr = 0.0;
+            var xValues = new double[_numInput]; // intput x(first input_num vals in train_data)
+            var tValues = new double[_numOutput]; // output y(last num_output vals in train_data)
             for (int i = 0; i < data.Length; i++) {
-                Array.Copy (data[i], x_values, num_input);
-                Array.Copy (data[i], num_input, t_values, 0, num_output);
-                var y_vals = this.ComputeOutputs (x_values);
-                for (int j = 0; j < num_output; j++) {
-                    var err = t_values[j] - y_vals[j]; // calc
-                    sum_squared_err += Math.Pow (err, 2);
+                Array.Copy (data[i], xValues, _numInput);
+                Array.Copy (data[i], _numInput, tValues, 0, _numOutput);
+                var yValues = this.ComputeOutputs (xValues);
+                for (int j = 0; j < _numOutput; j++) {
+                    var err = tValues[j] - yValues[j]; // calc
+                    sumSquaredErr += Math.Pow (err, 2);
                 }
             }
-            return sum_squared_err / data.Length;
+            return sumSquaredErr / data.Length;
         } //Error
     } // class NeuralNetwork
 } //ns
