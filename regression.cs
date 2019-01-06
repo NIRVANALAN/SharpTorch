@@ -14,13 +14,13 @@ namespace ann {
                 train_data[i] = new double[] { x, sin_x };
             }
             System.Console.WriteLine ("\nTraining data:");
-            ShowMatrix (train_data, 10, 4, true);
+            HelperClass.ShowMatrix (train_data, 10, 4, true);
             // create NN 
             var num_input = 1;
             var num_hidden = 12;
             var num_output = 1;
             var rnd_seed = 0;
-            System.Console.WriteLine ("\n Creating a" + num_input + "-" + num_hidden + "-" + num_output + "regression neural network");
+            System.Console.WriteLine ("\n Creating a " + num_input + "-" + num_hidden + "-" + num_output + " regression neural network");
             var nn = new NeutralNetwork (num_input, num_hidden, num_output, rnd_seed);
             var max_epochs = 1000;
             var lr = 0.004;
@@ -36,32 +36,6 @@ namespace ann {
 
             // Evaluate NN
         }
-        public static void ShowMatrix (double[][] matrix, int numRows, int decimals, bool indices) {
-            int len = matrix.Length.ToString ().Length; // refractor?
-            for (int i = 0; i < numRows; i++) {
-                if (indices)
-                    System.Console.Write ("[" + i.ToString ().PadLeft (len) + "] ");
-                for (int j = 0; j < matrix[i].Length; j++) {
-                    var v = matrix[i][j];
-                    if (v >= 0.0) //refractor?
-                        System.Console.Write (" "); //'+'
-                    System.Console.Write (v.ToString ("F" + decimals) + "  ");
-                }
-                System.Console.WriteLine ("");
-            }
-            if (numRows < matrix.Length) {
-                System.Console.WriteLine (". . .");
-                int last_row = matrix.Length - 1;
-                if (indices)
-                    Console.Write ("[" + last_row.ToString ().PadLeft (len) + "]");
-                for (int j = 0; j < matrix[last_row].Length; j++) {
-                    var v = matrix[last_row][j];
-                    if (v >= 0.0)
-                        System.Console.Write ("  ");
-                    System.Console.Write (v.ToString ("F" + decimals) + "  ");;
-                }
-            }
-            System.Console.WriteLine ("\n");
-        }
     }
+
 }
