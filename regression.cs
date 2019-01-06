@@ -1,21 +1,46 @@
 ﻿using System;
 
 namespace cs_nn_fm {
-    class Program {
+    class SinTrainData: Dataset
+    {
+        private int numItems;
+//        double[][] trainData;
+
+        public SinTrainData(int numitems, int seed)
+        {
+            this.rand_seed = seed;
+            this.numItems = numitems;
+            Rnd = new Random(rand_seed);
+            DataSet2D = new double[numitems][];
+            for (int i = 0; i < numItems; i++)
+            {
+                var x = 2*Math.PI * Rnd.NextDouble();
+                var sinX = Math.Sin(x);
+                DataSet2D[i] = new[] { x, sinX };
+            }
+
+        }
+
+        public override double[] GetItems(int index)
+        {
+            return DataSet2D[index];
+            throw new NotImplementedException();
+        }
+
+        public override int GetLen()
+        {
+            return DataSet2D.Length;
+            throw new NotImplementedException();
+        }
+
+    }
+    internal class Program {
         static void Main (string[] args) {
             Console.WriteLine ("NN Regression for predicting sin(x) begin:");
             // create training data 
-            const int numItems = 500;
-            var trainData = new double[numItems][];
-            var rnd = new Random (1);
-            // init trainData
-            for (int i = 0; i < numItems; i++) {
-                double x = 6.4 * rnd.NextDouble ();
-                double sinX = Math.Sin (x);
-                trainData[i] = new double[] { x, sinX };
-            }
+            var sTrainData = new SinTrainData(500,2);
             System.Console.WriteLine ("\nTraining data:");
-            Helper.ShowMatrix (trainData, 10, 4, true);
+            Helper.ShowMatrix (sTrainData.GetDataSet2D(), 10, 4, true);
             // create NN 
             const int numInput = 1;
             var numHidden = 12;
@@ -30,13 +55,12 @@ namespace cs_nn_fm {
             Console.WriteLine ("Setting learnRate = " + lr.ToString ("F4"));
             Console.WriteLine ("Setting momentum  = " + momentum.ToString ("F4"));
             // train NN 
-            System.Console.WriteLine ("stochastic back propogation training start:");
-            var weights = nn.Train (trainData, numMaxEpochs, lr, momentum);
-            System.Console.WriteLine ("Finished training");
+            var weights = nn.Train (sTrainData, numMaxEpochs, lr, momentum);
+            // show model
             System.Console.WriteLine ("Final model weights:");
             Helper.ShowVector(weights,4,4,true);
 
-            // Evaluate NN
+            // Test Example
             var y = nn.ComputeOutputs(new[] { Math.PI });
             Console.WriteLine("\nActual sin(PI) =  0.0   Predicted =  " + y[0].ToString("F6"));
 

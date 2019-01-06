@@ -43,11 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="activation.cs" />
+    <Compile Include="Activation.cs" />
     <Compile Include="helper.cs" />
     <Compile Include="NeutralNetwork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="regression.cs" />
+    <Compile Include="Dataset.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

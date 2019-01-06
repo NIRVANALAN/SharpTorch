@@ -124,7 +124,8 @@ namespace cs_nn_fm {
             Array.Copy (_outputs, resRes, resRes.Length); // copy res_res to output[]
             return resRes;
         }
-        public double[] Train (double[][] train_data, int max_epochs, double lr, double momentum) {
+        public double[] Train (Dataset data_set, int max_epochs, double lr, double momentum) {
+            System.Console.WriteLine("stochastic back propogation training start:");
             // back-prop specific arrays
             var hoGrads = Helper.MakeMatrix(_numHidden, _numOutput, 0.0); // hidden-output grad
             var obGrads = new double[_numOutput]; // output bias grad
@@ -146,25 +147,26 @@ namespace cs_nn_fm {
             var xValues = new double[_numInput]; // input vals
             var tValues = new double[_numOutput]; // target vals
 
-            var sequence = new int[train_data.Length];
+            var sequence = new int[data_set.GetLen()];
             for (int i = 0; i < sequence.Length; i++) {
                 sequence[i] = i;
             }
 
             var errInterval = max_epochs / 50; // interval to check validation data
+            var trainData = data_set.GetDataSet2D();
             while (epoch < max_epochs) { // every epoch
                 epoch++;
                 if (epoch % errInterval == 0 && epoch < max_epochs) {
                     // check err
-                    var trainErr = Error(train_data);
-                    Console.WriteLine ("epoch= " + epoch + " training error = " + trainErr.ToString ("F4"));
+                    var trainErr = Error(trainData);
+                    Console.WriteLine ("epoch= " + epoch + " acc = " + (1-trainErr).ToString ("F4"));
                 }
                 Shuffle (sequence); // shuffle the order
 
-                for (int ii = 0; ii < train_data.Length; ii++) {
+                for (int ii = 0; ii < trainData.Length; ii++) {
                     int idx = sequence[ii];
-                    Array.Copy (train_data[idx], xValues, _numInput);
-                    Array.Copy (train_data[idx], _numInput, tValues, 0, _numOutput);
+                    Array.Copy (trainData[idx], xValues, _numInput);
+                    Array.Copy (trainData[idx], _numInput, tValues, 0, _numOutput);
                     ComputeOutputs (xValues); // res_outupt has been copied to output[]
 
                     // i=inputs j=hidden(s) k=outputs
@@ -239,6 +241,7 @@ namespace cs_nn_fm {
                 } //each training item
             } // end while(each epoch)
             var bestWeights = GetWeights();
+            System.Console.WriteLine("Finished training");
             return bestWeights;
         }
 
