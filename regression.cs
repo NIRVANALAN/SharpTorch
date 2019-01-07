@@ -47,7 +47,7 @@ namespace cs_nn_fm {
             var numOutput = 1; // regression
             var rndSeed = 0;
             System.Console.WriteLine ("\n Creating a " + numInput + "-" + numHidden + "-" + numOutput + " regression neural network");
-            var nn = new NeutralNetwork (numInput, numHidden, numOutput, rndSeed);
+            var nn = new nn (numInput, numHidden, numOutput, rndSeed);
             const int numMaxEpochs = 1000;
             const double lr = 0.005;
             const double momentum = 0.001; // need more test
@@ -60,15 +60,15 @@ namespace cs_nn_fm {
             System.Console.WriteLine ("Final model weights:");
             Helper.ShowVector(weights,4,4,true);
 
-            // Test Example
-            var y = nn.ComputeOutputs(new[] { Math.PI });
-            Console.WriteLine("\nActual sin(PI) =  0.0   Predicted =  " + y[0].ToString("F6"));
-
-            y = nn.ComputeOutputs(new[] { Math.PI / 2 });
-            Console.WriteLine("\nActual sin(PI / 2)  =  1.0   Predicted =  " + y[0].ToString("F6"));
-
-            y = nn.ComputeOutputs(new[] { 3 * Math.PI / 2.0 });
-            Console.WriteLine("\nActual sin(3*PI / 2) = -1.0   Predicted = " + y[0].ToString("F6"));
+//            // Test Example
+//            var y = nn.Forward(new[] { Math.PI });
+//            Console.WriteLine("\nActual sin(PI) =  0.0   Predicted =  " + y[0].ToString("F6"));
+//
+//            y = nn.Forward(new[] { Math.PI / 2 });
+//            Console.WriteLine("\nActual sin(PI / 2)  =  1.0   Predicted =  " + y[0].ToString("F6"));
+//
+//            y = nn.Forward(new[] { 3 * Math.PI / 2.0 });
+//            Console.WriteLine("\nActual sin(3*PI / 2) = -1.0   Predicted = " + y[0].ToString("F6"));
         }
     }
 

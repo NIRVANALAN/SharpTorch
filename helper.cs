@@ -4,19 +4,33 @@ namespace cs_nn_fm
 {
     public class Helper
     {
-        public static double[][] MakeMatrix(int rows, int cols, double init_val) //helper method
+        public static void InitializeWeights(ref double[,] weights, double lo=-0.001, double hi=0.001, int rnd_seed = 1)
         {
-            var res = new double[rows][];
-            for (int r = 0; r < res.Length; r++)
+            var rnd = new Random(rnd_seed);
+            var row = weights.GetLength(0);
+            var col = weights.GetLength(1);
+            for (int i = 0; i < row; i++)
             {
-                res[r] = new double[cols];
-            }
-
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
+                for (int j = 0; j < col; j++)
                 {
-                    res[i][j] = init_val;
+                    weights[i, j] = lo + (hi - lo) * rnd.NextDouble();
+                }
+            }
+        }
+
+        public static double[,] MakeMatrix(int rows, int cols, double init_val) //helper method
+        {
+            var res = new double[rows, cols];
+//            for (int r = 0; r < res.Length; r++)
+//            {
+//                res[r] = new double[cols];
+//            }
+
+            for (var i = 0; i < rows; i++)
+            {
+                for (var j = 0; j < cols; j++)
+                {
+                    res[i, j] = init_val;
                 }
             }
 
