@@ -4,82 +4,93 @@ namespace cs_nn_fm
 {
     public class Model
     {
-        private layer[] _layers;
-        private int _layerNum;
-        private double[][] _layerSum; // should start from 1
-        private double[][] nodes;
+        public Layer[] Layers { get; }
+        public int LayerNum;
+        public double[][] LayerSum; // should start from 1
+        public double[][] Nodes { get; }
+        public double[] XValues;
 
-        public Model(layer[] layers)
+        public Model(Layer[] layers)
         {
-            _layers = layers;
-            _layerNum = 0;
-            foreach (var t in _layers) // init the nodes
+            Layers = layers;
+            LayerNum = 0;
+            foreach (var t in Layers) // init the nodes
             {
                 if (t.GetType() != typeof(PropogationLayer)) continue;
-                if (nodes[_layerNum] == null)
+                var cLayer = (PropogationLayer) t;
+                if (Nodes[LayerNum] == null)
                 {
-                    nodes[_layerNum] = new double[t.GetDIn() + 1]; // add biases
-                    nodes[_layerNum][t.GetDIn()] = 1; // for bias
+                    Nodes[LayerNum] = new double[t.DIn + 1]; // add biases
+                    Nodes[LayerNum][t.DIn] = 1; // for bias
                 }
 
-                if (nodes[_layerNum].Length == t.GetDIn()) // check the LastLayer.DOut==ThisLayer.Dint
+                if (Nodes[LayerNum].Length == t.DIn) // check the LastLayer.DOut==ThisLayer.Dint
                 {
-                    _layerNum++;
-                    nodes[_layerNum] = new double[t.GetDOut() + 1];
-                    nodes[_layerNum][t.GetDOut()] = 1; // for bias
-                    _layerSum[_layerNum] = new double[t.GetDOut() + 1];
+                    LayerNum++;
+//                    cLayer.Weights = Helper.MakeMatrix(cLayer.DIn + 1, cLayer.DOut);
+//                    Helper.InitializeWeights(ref cLayer.Weights); // init weights
+                    Nodes[LayerNum] = new double[t.DOut + 1];
+                    Nodes[LayerNum][t.DOut] = 1; // for bias
+                    LayerSum[LayerNum] = new double[t.DOut + 1];
+                    LayerSum[LayerNum][t.DOut] = 1;//for bias
                 }
                 else
                 {
-                    throw new Exception("layer not compatible in layerNum: " + _layerNum.ToString());
+                    throw new Exception("layer not compatible in layerNum: " + LayerNum.ToString());
                 }
             }
         }
 
-        public double[] Forward(double[] x_values)
+        public double[] Forward()
         {
             //check input dimension
-            if (x_values.Length + 1 != nodes[0].Length)
+            if (XValues.Length + 1 != Nodes[0].Length)
             {
                 throw new Exception("Input x_value not compatible");
             }
 
             // copy x_input to nodes[0]
-            for (int i = 0; i < x_values.Length; i++)
+            for (int i = 0; i < XValues.Length; i++)
             {
-                nodes[0][i] = x_values[i]; // nn input
+                Nodes[0][i] = XValues[i]; // nn input
             }
 
 //            nodes[0][x_values.Length] = 1; // have done above
             // forward
             var currentLayer = 0;
-            foreach (var t in _layers)
+//            var activationNextFlag = false;
+            foreach (var t in Layers)
             {
                 if (t.GetType() == typeof(PropogationLayer))
                 {
                     var cLayer = (PropogationLayer) t; // this is a Propogation Layer
-                    for (int j = 0; j < nodes[currentLayer+1].Length; j++)//input-next-layer
+                    for (int j = 0; j < Nodes[currentLayer+1].Length-1; j++)//input-next-layer -1 to remove bias-node
                     {
-                        for (int i = 0; i < nodes[currentLayer].Length; i++)//input-layer
+                        for (int i = 0; i < Nodes[currentLayer].Length; i++)//input-layer
                         {
-                            _layerSum[currentLayer + 1][j] += nodes[currentLayer][i] * cLayer.Weights[i, j];
+                            LayerSum[currentLayer + 1][j] += Nodes[currentLayer][i] * cLayer.Weights[i, j];
                         }
                     }
+
                     currentLayer++; // point to next input-layer
+//                    activationNextFlag = !activationNextFlag; // should be true in next circulation, proving that ActivationFunc is needed next
+                    Nodes[currentLayer] = LayerSum[currentLayer]; // avoid no activation after
+                    Nodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
                     continue;
                 }
 
                 // activation
-                if (t.GetType() != typeof(Activation)) // check at last if
-                    throw new Exception("Don't accept this type of Class in Forward");
+                if ((t.GetType() != typeof(Activation))) // check at last if
+                    throw new Exception("Don't accept this type of Class in Forward: "+t.GetType());
                 {
                     var cLayer = (ActivationLayer) t;
                     // polymorphism calculate activation
-                    cLayer.Calculate(ref _layerSum[currentLayer]);
+                    Nodes[currentLayer] = cLayer.Calculate(ref LayerSum[currentLayer]);
+                    Nodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
                 }
             } // forward finish
 
-            return nodes[currentLayer];//result
+            return Nodes[currentLayer];//result
         }
     }
 }

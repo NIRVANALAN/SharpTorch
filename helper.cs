@@ -18,7 +18,7 @@ namespace cs_nn_fm
             }
         }
 
-        public static double[,] MakeMatrix(int rows, int cols, double init_val) //helper method
+        public static double[,] MakeMatrix(int rows, int cols, double init_val=0.0) //helper method
         {
             var res = new double[rows, cols];
 //            for (int r = 0; r < res.Length; r++)

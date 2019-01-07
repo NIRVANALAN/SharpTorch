@@ -4,19 +4,7 @@ using System.Linq;
 namespace cs_nn_fm
 {
     public class nn
-    {   
-        double MSELoss(double[] y_pred, double[] y)
-        {
-            var sum = 0.0;
-            if (y_pred.Length == y.Length)
-            {
-                sum += y_pred.Select((t, i) => Math.Pow((t - y[i]), 2)).Sum();
-                return sum;
-            }
-
-            throw new Exception("y_pred and y not compatible in MESLoss");
-        }
-
+    {
         private int _numInput;
         private int _numHidden;
         private int _numOutput;
@@ -75,14 +63,14 @@ namespace cs_nn_fm
             var w = 0;
             for (int i = 0; i < _numInput; ++i)
             for (int j = 0; j < _numHidden; ++j)
-                ih_weights[i,j] = weights[w++];
+                ih_weights[i, j] = weights[w++];
 
             for (int j = 0; j < _numHidden; ++j)
                 _hBiases[j] = weights[w++];
 
             for (int j = 0; j < _numHidden; ++j)
             for (int k = 0; k < _numOutput; ++k)
-                _hoWeights[j,k] = weights[w++];
+                _hoWeights[j, k] = weights[w++];
 
             for (int k = 0; k < _numOutput; ++k)
                 _oBiases[k] = weights[w++]; // 
@@ -96,14 +84,14 @@ namespace cs_nn_fm
             var w = 0;
             for (int i = 0; i < _numInput; ++i)
             for (int j = 0; j < _numHidden; ++j)
-                res[w++] = ih_weights[i,j];
+                res[w++] = ih_weights[i, j];
 
             for (int j = 0; j < _numHidden; ++j)
                 res[w++] = _hBiases[j];
 
             for (int j = 0; j < _numHidden; ++j)
             for (int k = 0; k < _numOutput; ++k)
-                res[w++] = _hoWeights[j,k];
+                res[w++] = _hoWeights[j, k];
 
             for (int k = 0; k < _numOutput; ++k)
                 res[w++] = _oBiases[k];
@@ -124,7 +112,7 @@ namespace cs_nn_fm
             for (int j = 0; j < _numHidden; j++)
             for (int i = 0; i < _numInput; i++)
             {
-                hSums[j] += _inputs[i] * ih_weights[i,j]; // full-connect network
+                hSums[j] += _inputs[i] * ih_weights[i, j]; // full-connect network
             }
 
             // add the bias
@@ -139,7 +127,7 @@ namespace cs_nn_fm
             for (int k = 0; k < _numOutput; k++)
             for (int j = 0; j < _numHidden; j++)
             {
-                oSums[k] += _hiddens[j] * _hoWeights[j,k];
+                oSums[k] += _hiddens[j] * _hoWeights[j, k];
             }
 
             for (int k = 0; k < _numOutput; k++)
@@ -211,7 +199,7 @@ namespace cs_nn_fm
                     for (int k = 0; k < _numOutput; k++)
                     {
                         var derivatives = 1.0; // dummy
-                        oSignals[k] = (tValues[k] - _outputs[k]) * derivatives;
+                        oSignals[k] = (_outputs[k] - tValues[k]) * derivatives;
                     }
 
                     // 2. compute h-to-o weights gradients using output signals
@@ -219,7 +207,7 @@ namespace cs_nn_fm
                     {
                         for (int k = 0; k < _numOutput; k++)
                         {
-                            hoGrads[j,k] = oSignals[k] * _hiddens[j];
+                            hoGrads[j, k] = oSignals[k] * _hiddens[j];
                         }
                     }
 
@@ -235,7 +223,7 @@ namespace cs_nn_fm
                         var sum = 0.0;
                         for (int k = 0; k < _numOutput; k++)
                         {
-                            sum += oSignals[k] * _hoWeights[j,k];
+                            sum += oSignals[k] * _hoWeights[j, k];
                         }
 
                         var derivatives = (1 + _hiddens[j]) * (1 - _hiddens[j]); // for tanh
@@ -247,7 +235,7 @@ namespace cs_nn_fm
                     {
                         for (int j = 0; j < _numHidden; j++)
                         {
-                            ihGrad[i,j] = hSignals[j] * _inputs[i];
+                            ihGrad[i, j] = hSignals[j] * _inputs[i];
                         }
                     }
 
@@ -263,11 +251,11 @@ namespace cs_nn_fm
                     {
                         for (int j = 0; j < _numHidden; j++)
                         {
-                            var delta = lr * ihGrad[i,j];
-                            ih_weights[i,j] += delta;
+                            var delta = lr * ihGrad[i, j];
+                            ih_weights[i, j] -= delta;
                             // momentum involved
-                            ih_weights[i,j] += ihPrevWeightsDelta[i,j] * momentum;
-                            ihPrevWeightsDelta[i,j] = delta;
+                            ih_weights[i, j] -= ihPrevWeightsDelta[i, j] * momentum;
+                            ihPrevWeightsDelta[i, j] = delta;
                         }
                     }
 
@@ -275,8 +263,8 @@ namespace cs_nn_fm
                     for (int j = 0; j < _numHidden; j++)
                     {
                         var delta = hbGrad[j] * lr;
-                        _hBiases[j] += delta;
-                        _hBiases[j] += hPrevBiasesDelta[j] * momentum;
+                        _hBiases[j] -= delta;
+                        _hBiases[j] -= hPrevBiasesDelta[j] * momentum;
                         hPrevBiasesDelta[j] = delta;
                     }
 
@@ -285,10 +273,10 @@ namespace cs_nn_fm
                     {
                         for (int k = 0; k < _numOutput; k++)
                         {
-                            var delta = hoGrads[j,k] * lr;
-                            _hoWeights[j,k] += delta;
-                            _hoWeights[j,k] += hoPrevWeightsDelta[j,k] * momentum;
-                            hoPrevWeightsDelta[j,k] = delta;
+                            var delta = hoGrads[j, k] * lr;
+                            _hoWeights[j, k] -= delta;
+                            _hoWeights[j, k] -= hoPrevWeightsDelta[j, k] * momentum;
+                            hoPrevWeightsDelta[j, k] = delta;
                         }
                     }
 
@@ -296,8 +284,8 @@ namespace cs_nn_fm
                     for (int k = 0; k < _numOutput; k++)
                     {
                         var delta = obGrads[k] * lr;
-                        obGrads[k] += delta;
-                        obGrads[k] += oPrevBiasesDelta[k] * momentum;
+                        obGrads[k] -= delta;
+                        obGrads[k] -= oPrevBiasesDelta[k] * momentum;
                         oPrevBiasesDelta[k] = delta;
                     }
                 } //each training item
