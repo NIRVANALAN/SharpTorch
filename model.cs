@@ -8,7 +8,10 @@ namespace cs_nn_fm
         public int LayerNum;
         public double[][] LayerSum; // should start from 1
         public double[][] Nodes { get; }
-        public double[] XValues;
+//        public double[] XValues;
+        public double[] PredictedValues { get; set; }
+        public int InputNum { get; set; }
+        public int OutputNum { get; set; }
 
         public Model(Layer[] layers)
         {
@@ -20,19 +23,19 @@ namespace cs_nn_fm
                 var cLayer = (PropogationLayer) t;
                 if (Nodes[LayerNum] == null)
                 {
-                    Nodes[LayerNum] = new double[t.DIn + 1]; // add biases
-                    Nodes[LayerNum][t.DIn] = 1; // for bias
+                    Nodes[LayerNum] = new double[cLayer.DIn + 1]; // add biases
+                    Nodes[LayerNum][cLayer.DIn] = 1; // for bias
                 }
 
-                if (Nodes[LayerNum].Length == t.DIn) // check the LastLayer.DOut==ThisLayer.Dint
+                if (Nodes[LayerNum].Length == cLayer.DIn) // check the LastLayer.DOut==ThisLayer.Dint
                 {
                     LayerNum++;
 //                    cLayer.Weights = Helper.MakeMatrix(cLayer.DIn + 1, cLayer.DOut);
 //                    Helper.InitializeWeights(ref cLayer.Weights); // init weights
-                    Nodes[LayerNum] = new double[t.DOut + 1];
-                    Nodes[LayerNum][t.DOut] = 1; // for bias
-                    LayerSum[LayerNum] = new double[t.DOut + 1];
-                    LayerSum[LayerNum][t.DOut] = 1;//for bias
+                    Nodes[LayerNum] = new double[cLayer.DOut + 1];
+                    Nodes[LayerNum][cLayer.DOut] = 1; // for bias
+                    LayerSum[LayerNum] = new double[cLayer.DOut + 1];
+                    LayerSum[LayerNum][cLayer.DOut] = 1;//for bias
                 }
                 else
                 {
@@ -41,7 +44,7 @@ namespace cs_nn_fm
             }
         }
 
-        public double[] Forward()
+        public Model Forward(double[] XValues)
         {
             //check input dimension
             if (XValues.Length + 1 != Nodes[0].Length)
@@ -74,7 +77,7 @@ namespace cs_nn_fm
 
                     currentLayer++; // point to next input-layer
 //                    activationNextFlag = !activationNextFlag; // should be true in next circulation, proving that ActivationFunc is needed next
-                    Nodes[currentLayer] = LayerSum[currentLayer]; // avoid no activation after
+                    Nodes[currentLayer] = LayerSum[currentLayer]; // avoid no cost function after (in regression)
                     Nodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
                     continue;
                 }
@@ -86,11 +89,12 @@ namespace cs_nn_fm
                     var cLayer = (ActivationLayer) t;
                     // polymorphism calculate activation
                     Nodes[currentLayer] = cLayer.Calculate(ref LayerSum[currentLayer]);
-                    Nodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
+//                    Nodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
                 }
             } // forward finish
 
-            return Nodes[currentLayer];//result
+            PredictedValues = Nodes[currentLayer]; // store for later use
+            return this;//result
         }
     }
 }

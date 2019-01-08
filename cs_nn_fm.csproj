@@ -44,11 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activation.cs" />
+    <Compile Include="Evaluate.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Loss.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="nn.cs" />
+    <Compile Include="Optimizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="regression.cs" />
     <Compile Include="Dataset.cs" />
