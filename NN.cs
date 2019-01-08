@@ -217,7 +217,7 @@ namespace cs_nn_fm
                         obGrads[k] = oSignals[k] * 1.0; // dummy
                     }
 
-                    // 3.comput hidden nodes signals
+                    // 3.compute hidden nodes signals
                     for (int j = 0; j < _numHidden; j++)
                     {
                         var sum = 0.0;
