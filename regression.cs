@@ -54,6 +54,10 @@ namespace cs_nn_fm
             const double momentum = 0.001; // need more test
             // dataSet 
             var sTrainData = new SinTrainData(500, 2);
+            var allData = sTrainData.dataSet;
+            double[][] trainSet;
+            double[][] testSet;
+            Helper.SplitTrainTest(allData,0.8,1,trainData:out trainSet,testData:out testSet);
             // train via sgd
             var optimizer = new SGD(model,learning_rate,momentum);
             var yPred = model.Forward(new double[]{});//TODO InputValues

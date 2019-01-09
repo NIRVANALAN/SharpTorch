@@ -4,7 +4,37 @@ namespace cs_nn_fm
 {
     public class Helper
     {
-        public static void InitializeWeights(ref double[,] weights, double lo=-0.001, double hi=0.001, int rnd_seed = 1)
+        public static void SplitTrainTest(double[][] allData, double trainPct,
+            int seed, out double[][] trainData, out double[][] testData)
+        {
+            Random rnd = new Random(seed);
+            int totRows = allData.Length;
+            int numTrainRows = (int) (totRows * trainPct); // usually 0.80
+            int numTestRows = totRows - numTrainRows;
+            trainData = new double[numTrainRows][];
+            testData = new double[numTestRows][];
+
+            double[][] copy = new double[allData.Length][]; // ref copy of data
+            for (int i = 0; i < copy.Length; ++i)
+                copy[i] = allData[i];
+
+            for (int i = 0; i < copy.Length; ++i) // scramble order
+            {
+                int r = rnd.Next(i, copy.Length); // use Fisher-Yates
+                double[] tmp = copy[r];
+                copy[r] = copy[i];
+                copy[i] = tmp;
+            }
+
+            for (int i = 0; i < numTrainRows; ++i)
+                trainData[i] = copy[i];
+
+            for (int i = 0; i < numTestRows; ++i)
+                testData[i] = copy[i + numTrainRows];
+        } // SplitTrainTest
+
+        public static void InitializeWeights(ref double[,] weights, double lo = -0.001, double hi = 0.001,
+            int rnd_seed = 1)
         {
             var rnd = new Random(rnd_seed);
             var row = weights.GetLength(0);
@@ -18,7 +48,7 @@ namespace cs_nn_fm
             }
         }
 
-        public static double[,] MakeMatrix(int rows, int cols, double init_val=0.0) //helper method
+        public static double[,] MakeMatrix(int rows, int cols, double init_val = 0.0) //helper method
         {
             var res = new double[rows, cols];
 //            for (int r = 0; r < res.Length; r++)
