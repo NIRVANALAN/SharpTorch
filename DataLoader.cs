@@ -54,9 +54,17 @@ namespace cs_nn_fm
 
             var res = new double[_batchSize][];
             var end = _index + _batchSize;
-            for (int i = 0; _index < end&&_index<_dataSet.GetLen(); i++)
+            for (int i = 0; _index < end && _index < _dataSet.GetLen(); i++)
             {
-                res[i] = _dataSet.GetItems(sequence[_index]);
+                if (_shuffle)
+                {
+                    res[i] = _dataSet.GetItems(sequence[_index]);
+                }
+                else
+                {
+                    res[i] = _dataSet.GetItems(_index);
+                }
+
                 _index++;
             }
 

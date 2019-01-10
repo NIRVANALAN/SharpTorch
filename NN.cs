@@ -37,7 +37,7 @@ namespace cs_nn_fm
         }
 
         // helper methods
-        public void InitializeWeights()
+        public double[] InitializeWeights()
         {
             var numOfWeights = (_numInput * _numHidden) + _numHidden + (_numHidden * _numOutput) + _numOutput;
             var initialWeights = new double[numOfWeights];
@@ -49,6 +49,7 @@ namespace cs_nn_fm
             }
 
             SetWeight(initialWeights);
+            return initialWeights;
         }
 
         public void SetWeight(double[] weights)
@@ -142,7 +143,7 @@ namespace cs_nn_fm
             return resRes;
         }
 
-        public double[] Train(Dataset data_set, int max_epochs, double lr, double momentum)
+        public double[] Train(Dataset data_set, int max_epochs, double lr, double momentum, bool shuffle_flag, ref double[] weights)
         {
             System.Console.WriteLine("stochastic back propogation training start:");
             // back-prop specific arrays
@@ -172,7 +173,7 @@ namespace cs_nn_fm
                 sequence[i] = i;
             }
 
-            var errInterval = max_epochs / 50; // interval to check validation data
+            var errInterval = 10 + max_epochs / 50; // interval to check validation data
             var trainData = data_set.DataSet;
             while (epoch < max_epochs)
             {
@@ -185,8 +186,10 @@ namespace cs_nn_fm
                     Console.WriteLine("epoch= " + epoch + " acc = " + (1 - trainErr).ToString("F4"));
                 }
 
-                Shuffle(sequence); // shuffle the order
-
+                if (shuffle_flag)
+                {
+                    Shuffle(sequence); // shuffle the order
+                }
                 for (int ii = 0; ii < trainData.Length; ii++)
                 {
                     int idx = sequence[ii];

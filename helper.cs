@@ -108,6 +108,10 @@ namespace cs_nn_fm
         public static void ShowMatrix(double[][] matrix, int numRows, int decimals, bool indices)
         {
             int len = matrix.Length.ToString().Length; // refractor?
+            if (len<numRows)
+            {
+                numRows = len;
+            }
             for (int i = 0; i < numRows; i++)
             {
                 if (indices)

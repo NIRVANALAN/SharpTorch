@@ -14,37 +14,50 @@ namespace cs_nn_fm
         public double[] PredictedValues { get; set; }
         public int InputNum { get; set; }
         public int OutputNum { get; set; }
+        public int WeightsNum { get; set; }
+        public int[] DIns;
+        public int[] DOuts;
+        public double[] InitialWeights;
 
-        public Model(Layer[] layers)
+
+        public Model(Layer[] layers, double[] weights = null)
         {
             Layers = layers;
+            InitialWeights = weights;
             LayerNum = 0;
-//            var totalPropogationLayer = 0;
-//            foreach (var t in layers)
-//            {
-//                if (t.GetType().BaseType == typeof(PropogationLayer))
-//                    totalPropogationLayer++;
-//            }
-
             Nodes = new double[layers.Length][];
             LayerSum = new double[layers.Length][];
             var flag = 1;
             InputNum = ((PropogationLayer) layers[0]).DIn;
+            var propLayerIndex = 0;
+            DIns = new int[layers.Length];
+            DOuts = new int[layers.Length];
             foreach (var t in Layers) // check if the model is legal(propogation-Activation)
             {
                 if (flag == 1 && t.GetType().BaseType == typeof(PropogationLayer))
                 {
+                    var cLayer = (PropogationLayer) t;
                     flag = 1 - flag;
-                    OutputNum = ((PropogationLayer) t).DOut;
+                    DOuts[propLayerIndex] = OutputNum = cLayer.DOut;
+                    DIns[propLayerIndex] = cLayer.DIn;
+                    propLayerIndex++;
                     continue;
                 }
-                if (flag==0&& t.GetType().BaseType == typeof(ActivationLayer))
+
+                if (flag == 0 && t.GetType().BaseType == typeof(ActivationLayer))
                 {
                     flag = 1 - flag;
                 }
-
             }
 
+            WeightsNum = 0;
+            for (int i = 0; i < propLayerIndex; i++)
+            {
+                WeightsNum += (DIns[i] + 1) * DOuts[i]; //bias
+            }
+
+            //initialize weights
+            InitializeWeights();
             foreach (var t in Layers) // init the nodes
             {
                 if (t.GetType().BaseType != typeof(PropogationLayer)) continue;
@@ -68,6 +81,35 @@ namespace cs_nn_fm
                 else
                 {
                     throw new Exception("layer not compatible in layerNum: " + LayerNum);
+                }
+            }
+        }
+
+        private void InitializeWeights(double lo = -0.001, double hi = 0.001, int rnd_seed = 1)
+        {
+            var rnd = new Random(rnd_seed);
+            InitialWeights = new double[WeightsNum];
+            for (int i = 0; i < InitialWeights.Length; ++i)
+                InitialWeights[i] = (hi - lo) * rnd.NextDouble() + lo; // [-0.001 to +0.001] by default
+            SetWeights(InitialWeights); //setWeights globally
+        }
+
+        public void SetWeights(double[] initialWeights)
+        {
+            if (WeightsNum != initialWeights.Length)
+            {
+                throw new Exception("Bad weights array in SetWeights");
+            }
+
+            var w = 0;
+            for (int i = 0; i < DIns.Length; i++)
+            {
+                for (int j = 0; j < DIns[i]; j++)
+                {
+                    for (int k = 0; k < DOuts[i]; k++)
+                    {
+                        ((PropogationLayer) Layers[i * 2]).Weights[j, k] = initialWeights[w++];
+                    }
                 }
             }
         }
@@ -119,7 +161,7 @@ namespace cs_nn_fm
                     var cLayer = (ActivationLayer) t;
                     // polymorphism calculate activation
                     Nodes[currentLayer] = cLayer.Calculate(ref LayerSum[currentLayer]);
-                    Nodes[currentLayer][Nodes[currentLayer].Length-1] = 1; //should be 1,for bias
+                    Nodes[currentLayer][Nodes[currentLayer].Length - 1] = 1; //should be 1,for bias
                 }
             } // forward finish
 
