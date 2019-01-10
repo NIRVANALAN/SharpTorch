@@ -42,7 +42,7 @@ namespace cs_nn_fm
             Console.WriteLine("\nActual sin(3*PI / 2) = -1.0   Predicted = " + y[0].ToString("F6"));
         }
 
-        static void Main(string[] args)
+        public void RegressionUsingFrameWork()
         {
             var inputLayer = new Linear(1, 12);
             var activationLayer1TanH = new HyperTan();
@@ -67,20 +67,27 @@ namespace cs_nn_fm
                 //compute and print loss
                 var loss = new RegressionLoss(yPred, outputData[0]); //tValue
                 //  Console.WriteLine(loss.Item()); // print loss
-                if (i%20==0&&i>0)//print epoch & error info
+                if (i % 20 == 0 && i > 0) //print epoch & error info
                 {
-                    Console.Write("Epoch: " + i.ToString());
                     var mse = Evaluate.MSE(model, testSet);
-                    Console.WriteLine(" MSE: " + mse.ToString());
+                    Console.WriteLine("epoch = " + i + " acc = " + (1 - mse).ToString("F4"));
+//                    Console.WriteLine(" MSE: " + mse.ToString());
                 }
 
                 optimizer.Zero_grad(); // refresh buffer before .backward()
                 loss.Backward(); // calculate grads
                 optimizer.Step(); // update weights
             }
-            // test
 
-            ;
+            // test
+        }
+
+
+        static void Main(string[] args)
+        {
+            var program = new Program();
+//            program.ManualPropSin();
+            program.RegressionUsingFrameWork();
         }
     }
 }
