@@ -62,14 +62,14 @@ namespace cs_nn_fm
             var testInput = new[] {test[0]};
             var testOutput = new[] {test[1]};
             //
-            var yPred = model.Forward(testInput); //TODO InputValues need DataLoader in the future
+            var yPred = model.Forward(testInput); //TODO need DataLoader in the future
             //compute and print loss
-            var loss = new RegressionLoss(yPred, testOutput); //TODO targetValues 
+            var loss = new RegressionLoss(yPred, testOutput); //TODO DataLoader 
             //TODO print loss.item()
             optimizer.Zero_grad(); // refresh buffer before .backward()
             loss.Backward(); // calculate grads
             optimizer.Step(); // update weights
-            // So beautiful...........
+            // debug..........
         }
     }
 }

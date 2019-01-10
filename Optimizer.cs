@@ -13,6 +13,7 @@ namespace cs_nn_fm
         protected Optimizer(Model model, double lr)
         {
             Model = model;
+            Layers = model.Layers;
             Lr = lr;
         }
 
@@ -44,7 +45,7 @@ namespace cs_nn_fm
             //===========update begin here=========
             for (int layerIndex = 0; layerIndex < Layers.Length - 1; layerIndex++)
             {
-                if (Layers[layerIndex].GetType() == typeof(PropogationLayer))
+                if (Layers[layerIndex].GetType().BaseType == typeof(PropogationLayer))
                 {
                     var cLayer = (PropogationLayer)Layers[layerIndex];
                     for (int i = 0; i < cLayer.DIn; i++)
@@ -57,9 +58,10 @@ namespace cs_nn_fm
                             cLayer.PrevWeightsDelta[i, j] = delta;
                         }
                     }
+//                    Layers[layerIndex] = cLayer;
                 } //propogationLayer
             } // weights update step
-            throw new NotImplementedException();
+//            throw new NotImplementedException();
         }
 //        public static double[] SGD(Model model, Dataset data_set, int max_epochs, double lr, double momentum)
 //        {

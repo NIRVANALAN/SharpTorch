@@ -78,7 +78,7 @@
             Helper.InitializeWeights(ref Weights);
             Grads = Helper.MakeMatrix(DIn + 1, DOut);
             PrevWeightsDelta = Helper.MakeMatrix(DIn + 1, DOut);
-            Signals = new double[DOut + 1];
+            Signals = new double[DOut]; // gradients output signals
         }
     }
 }

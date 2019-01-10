@@ -8,6 +8,7 @@ namespace cs_nn_fm
         public double LossSum;
         public Model Model;
         public Layer[] Layers;
+
         public double[] PredictedValues;
 //        public double Lr; //learning rate
 //        public double Momentum;
@@ -25,13 +26,13 @@ namespace cs_nn_fm
             Layers = model.Layers;
             foreach (var t in Layers) // init weights and signals
             {
-                if (t.GetType() != typeof(PropogationLayer)) continue;
+                if (t.GetType().BaseType != typeof(PropogationLayer)) continue;
                 var cLayer = (PropogationLayer) t;
 //                cLayer.Weights = new double[cLayer.GetDIn()+1,cLayer.GetDOut()];
                 cLayer.Signals = new double[cLayer.DOut];
                 cLayer.PrevWeightsDelta = new double[cLayer.DIn + 1, cLayer.DOut]; // bias included
             }
-        }//ctor
+        } //ctor
 
         public abstract double Calculate();
 
@@ -50,28 +51,28 @@ namespace cs_nn_fm
 //                {
 //                    cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
 //                }
-//            } // Should calculate costFunction signal here TODO
-
-            CostFunctionDerivative();
+//            } 
+            CostFunctionDerivative(); // calculate costFunction signal here : polymorphism
 
             //============compute signal and Grads=============
-            for (int i = currentLayerIndex; i >= 0; i--) // from output-layer 
+            for (var i = currentLayerIndex; i >= 0; i--) // from output-layer 
             {
-                if (Layers[i].GetType() == typeof(PropogationLayer)) // backward weights
+                if (Layers[i].GetType().BaseType == typeof(PropogationLayer)) // backward weights
                 {
                     var cLayer = (PropogationLayer) Layers[i];
-                    for (int j = 0; j < cLayer.DIn; j++)
+                    for (var j = 0; j < cLayer.DIn + 1; j++) // add bias node here
                     {
-                        for (int k = 0; k < cLayer.DOut; k++)
+                        for (var k = 0; k < cLayer.DOut; k++)
                         {
-                            cLayer.Grads[j, k] = cLayer.Signals[k] * Model.Nodes[i][j];
+                            cLayer.Grads[j, k] = cLayer.Signals[k] * Model.Nodes[i/2][j];//  i/2:layer->hidden nodes
                         }
                     } // calculate weightsGrad
 
+//                    Layers[i] = cLayer;
                     continue;
                 }
 
-                if (Layers[i].GetType() != typeof(ActivationLayer)) // backward signal
+                if (Layers[i].GetType().BaseType != typeof(ActivationLayer)) // backward signal
                     throw new Exception("Do not accept Propogation layer in activation layer position: " +
                                         Layers[i].GetType());
                 {
@@ -89,8 +90,10 @@ namespace cs_nn_fm
                         // signal
                         var derivatives = cLayer.Differentiate(Model.Nodes[i][j]);
                         hiddenLayer.Signals[j] = sum * derivatives;
-                        //                            var derivatives = 
                     }
+
+//                    Layers[i - 1] = hiddenLayer;
+//                    Layers[i + 1] = outputLayer;
                 }
             } // backward finish
 //            //===========update should be via optimizer=========
@@ -124,8 +127,8 @@ namespace cs_nn_fm
 
         public override double Calculate()
         {
-            if (PredictedValues.Length!=1)
-                throw new Exception("Not compatible dimension for RegressionLoss: "+PredictedValues.Length);
+            if (PredictedValues.Length != 1)
+                throw new Exception("Not compatible dimension for RegressionLoss: " + PredictedValues.Length);
             {
                 return PredictedValues[0] - TargetValues[0];
             }
@@ -136,19 +139,18 @@ namespace cs_nn_fm
         {
             var currentLayerIndex = Layers.Length - 1; // for output layer
             // output cost_function derivatives
-            if (Layers[currentLayerIndex].GetType() == typeof(PropogationLayer))
+            if (Layers[currentLayerIndex].GetType().BaseType != typeof(PropogationLayer))
+                throw new Exception("Do not accept this type of Class here:" + Layers[currentLayerIndex].GetType());
+            // Regression, no derivatives calculation....
+            var derivative = 1.0; //dummy
+            var cLayer = (PropogationLayer) Layers[currentLayerIndex];
+            for (int i = 0; i < cLayer.DOut; i++)
             {
-                // Regression, no derivatives calculation....
-                var derivative = 1.0; //dummy
-                var cLayer = (PropogationLayer)Layers[currentLayerIndex];
-                for (int i = 0; i < cLayer.DOut; i++)
-                {
-                    cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
-                }
-            } // calculate Regression costFunction signal here (dummy)
-            throw new NotImplementedException();
+                cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
+            }
         }
     }
+
     public class MSELoss : Loss
     {
         public override double Calculate()
