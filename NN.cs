@@ -173,7 +173,7 @@ namespace cs_nn_fm
             }
 
             var errInterval = max_epochs / 50; // interval to check validation data
-            var trainData = data_set.dataSet;
+            var trainData = data_set.DataSet;
             while (epoch < max_epochs)
             {
                 // every epoch

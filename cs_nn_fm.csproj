@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activation.cs" />
+    <Compile Include="DataLoader.cs" />
     <Compile Include="Evaluate.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Layer.cs" />

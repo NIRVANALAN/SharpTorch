@@ -1,22 +1,27 @@
 using System;
+using System.Data;
+using System.Reflection;
 
 namespace cs_nn_fm
 {
     public class Helper
     {
-        public static void SplitTrainTest(double[][] allData, double trainPct,
-            int seed, out double[][] trainData, out double[][] testData)
+        public static void SplitTrainTest(Dataset allData, double trainPct,
+            int seed, out Dataset trainData, out Dataset testData)
         {
             Random rnd = new Random(seed);
-            int totRows = allData.Length;
-            int numTrainRows = (int) (totRows * trainPct); // usually 0.80
-            int numTestRows = totRows - numTrainRows;
-            trainData = new double[numTrainRows][];
-            testData = new double[numTestRows][];
+            var allDataItems = allData.DataSet;
+            var totRows = allDataItems.Length;
+            var trainRows = (int) (totRows * trainPct); // usually 0.80
+            var testRows = totRows - trainRows;
+            var trainDataItems = new double[trainRows][];
+            var testDataItems = new double[testRows][];
+//            dynamic trainData = (allData)trainData;
+//            testData = new double[testRows][];
 
-            double[][] copy = new double[allData.Length][]; // ref copy of data
+            double[][] copy = new double[allDataItems.Length][]; // ref copy of data
             for (int i = 0; i < copy.Length; ++i)
-                copy[i] = allData[i];
+                copy[i] = allDataItems[i];
 
             for (int i = 0; i < copy.Length; ++i) // scramble order
             {
@@ -26,11 +31,19 @@ namespace cs_nn_fm
                 copy[i] = tmp;
             }
 
-            for (int i = 0; i < numTrainRows; ++i)
-                trainData[i] = copy[i];
+            for (int i = 0; i < trainRows; ++i)
+                trainDataItems[i] = copy[i];
 
-            for (int i = 0; i < numTestRows; ++i)
-                testData[i] = copy[i + numTrainRows];
+            for (int i = 0; i < testRows; ++i)
+                testDataItems[i] = copy[i + trainRows];
+            var assembly = Assembly.GetExecutingAssembly(); // 获取当前程序集 
+//            var type = allData.GetType();
+
+            //parameters
+            var trainSetParameters = new object[] {trainRows, trainDataItems, 1, true};
+            var testSetParameters = new object[] {testRows, testDataItems, 1, true};
+            trainData = assembly.CreateInstance((allData.GetType()).ToString(),true, System.Reflection.BindingFlags.Default,null,trainSetParameters,null,null) as Dataset; // reflection
+            testData = assembly.CreateInstance(allData.GetType().ToString(), true, System.Reflection.BindingFlags.Default, null, testSetParameters, null, null) as Dataset;
         } // SplitTrainTest
 
         public static void InitializeWeights(ref double[,] weights, double lo = -0.001, double hi = 0.001,

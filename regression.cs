@@ -2,16 +2,15 @@
 
 namespace cs_nn_fm
 {
-    
     internal class Program
     {
         public void ManualPropSin()
         {
             Console.WriteLine("NN Regression for predicting sin(x) begin:");
             // create training data 
-            var sTrainData = new SinTrainData(500, 2);
+            var sTrainData = new SinTrainData(500);
             System.Console.WriteLine("\nTraining data:");
-            Helper.ShowMatrix(sTrainData.dataSet, 10, 4, true);
+            Helper.ShowMatrix(sTrainData.DataSet, 10, 4, true);
             // create NN 
             const int numInput = 1;
             var numHidden = 12;
@@ -53,23 +52,24 @@ namespace cs_nn_fm
             const double learning_rate = 0.005;
             const double momentum = 0.001; // need more test
             // dataSet 
-            var sTrainData = new SinTrainData(500, 2);
-            var allData = sTrainData.dataSet;
-            double[][] trainSet;
-            double[][] testSet;
-            Helper.SplitTrainTest(allData,0.8,1,trainData:out trainSet,testData:out testSet);
+            var sTrainData = new SinTrainData(); // generate 1000 items default
+            Helper.SplitTrainTest(sTrainData, 0.8, 1, trainData: out var trainSet, testData: out var testSet);
+
             // train via sgd
-            var optimizer = new SGD(model,learning_rate,momentum);
-            var yPred = model.Forward(new double[]{});//TODO InputValues
+            var optimizer = new SGD(model, learning_rate, momentum);
+            // test input and output
+            var test = trainSet.GetItems(0);
+            var testInput = new[] {test[0]};
+            var testOutput = new[] {test[1]};
+            //
+            var yPred = model.Forward(testInput); //TODO InputValues need DataLoader in the future
             //compute and print loss
-            var loss = new RegressionLoss(yPred, new double[] { }); //TODO targetValues 
+            var loss = new RegressionLoss(yPred, testOutput); //TODO targetValues 
             //TODO print loss.item()
             optimizer.Zero_grad(); // refresh buffer before .backward()
             loss.Backward(); // calculate grads
             optimizer.Step(); // update weights
             // So beautiful...........
-
-
         }
     }
 }

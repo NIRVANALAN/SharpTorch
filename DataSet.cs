@@ -4,19 +4,19 @@ namespace cs_nn_fm
 {
     public abstract class Dataset
     {
+//        protected Dataset(string root = "", string datatxt = null, )
+//        {
+//        }
+
         public int InputNum { get; set; }
         public int OutputNum { get; set; }
-        public double[][] dataSet { get; set; }
+        public double[][] DataSet { get; set; }
         protected int NumItems;
         protected int RandSeed;
         protected Random Rnd;
         protected double[][][] DataSet3D;
         public abstract double[] GetItems(int index);
         public abstract int GetLen();
-//        public double[][] GetDataSet2D()
-//        {
-//            return DataSet2D;
-//        }
     }
 
     public abstract class DataSet3D : Dataset
@@ -27,7 +27,6 @@ namespace cs_nn_fm
     public abstract class DataSet2D : Dataset
     {
         //TODO
-
     }
 
 
@@ -36,29 +35,39 @@ namespace cs_nn_fm
 //        private int numItems;
         //        double[][] trainData;
 
-        public SinTrainData(int num_items, int seed)
+        public SinTrainData(int num_items = 1000, double[][] dataSet = null, int seed = 1, bool provideDataFlag = false)
         {
             RandSeed = seed;
-            NumItems = num_items;
             Rnd = new Random(RandSeed);
-            dataSet = new double[num_items][];
-            for (int i = 0; i < NumItems; i++)
+            if (provideDataFlag)
             {
-                var x = 2 * Math.PI * Rnd.NextDouble();
-                var sinX = Math.Sin(x);
-                dataSet[i] = new[] { x, sinX };
+                DataSet = dataSet;
+                NumItems = DataSet.Length;
             }
+            else
+            {
+                NumItems = num_items;
+                DataSet = new double[num_items][];
+                for (int i = 0; i < NumItems; i++)
+                {
+                    var x = 2 * Math.PI * Rnd.NextDouble();
+                    var sinX = Math.Sin(x);
+                    DataSet[i] = new[] {x, sinX};
+                }
+            }
+
+ 
         }
 
-        public override double[] GetItems(int index) //TODO
+        public override double[] GetItems(int index) //按顺序读取每个元素的具体内容
         {
-            return dataSet[index];
+//            var index = Rnd.Next(NumItems-1);
+            return DataSet[index];
         }
 
-        public override int GetLen()
+        public override int GetLen() //返回数据集的长度
         {
-            return dataSet.Length;
+            return DataSet.Length;
         }
     }
-
 }
