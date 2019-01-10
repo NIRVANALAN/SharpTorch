@@ -96,7 +96,7 @@ namespace cs_nn_fm
 
             for (int k = 0; k < _numOutput; ++k)
                 res[w++] = _oBiases[k];
-            return _outputs; // tmp
+            return res; // tmp
         }
 
         public double[] Forward(double[] x_values)
@@ -173,7 +173,7 @@ namespace cs_nn_fm
                 sequence[i] = i;
             }
 
-            var errInterval = 10 + max_epochs / 50; // interval to check validation data
+            var errInterval = 1 + max_epochs / 50; // interval to check validation data
             var trainData = data_set.DataSet;
             while (epoch < max_epochs)
             {

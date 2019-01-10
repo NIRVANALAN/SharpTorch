@@ -28,6 +28,7 @@ namespace cs_nn_fm
             Console.WriteLine("Setting momentum  = " + momentum.ToString("F4"));
             // train NN 
             InitialWeights = new double[37];//just for test
+            InitialWeights = nn.GetWeights();
             FinalWeights = nn.Train(sTrainData, numMaxEpochs, lr, momentum, shuffle_flag, ref InitialWeights);
             // show model
 //            System.Console.WriteLine("Final model weights:");
@@ -49,7 +50,8 @@ namespace cs_nn_fm
             var inputLayer = new Linear(1, 12);
             var activationLayer1TanH = new HyperTan();
             var hiddenLayer = new Linear(12, 1);
-            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer}); // create model
+            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer},initialWeights); // create model
+
 //            const int numEpochs = 1;
             const double learning_rate = 0.002;
             const double momentum = 0.0001; // need more test
@@ -62,10 +64,11 @@ namespace cs_nn_fm
             var dataLoader = new DataLoader(trainSet, 1, shuffle_flag);
             //train using SGD
             var epoch = 0;
+            var epochInternal = 1 + trainSet.GetLen() / 50;
             while (epoch < numEpochs)
             {
                 epoch++;
-                if (epoch % 10 == 0 && epoch > 0) //print epoch & error info
+                if (epoch % epochInternal == 0 && epoch > 0) //print epoch & error info
                 {
                     var mse = Evaluate.MSE(model, testSet);
                     Console.WriteLine("epoch = " + epoch + " acc = " + (1 - mse).ToString("F4"));
@@ -100,10 +103,8 @@ namespace cs_nn_fm
             var sTrainData = new SinTrainData(10);
 //            var sTrainData = new SinTrainData(dataSet: new double[1][] {new double[] {1, Math.Sin(1)}},
 //                provideDataFlag: true);
-            double[] initialWeights;
-            double[] finalWeights;
-            program.ManualPropSin(sTrainData, 1, false, InitialWeights: out initialWeights,
-                FinalWeights: out finalWeights);
+            program.ManualPropSin(sTrainData, 1, false, InitialWeights: out var initialWeights,
+                FinalWeights: out var finalWeights);
             program.RegressionUsingFrameWork(sTrainData, false, 1, initialWeights:ref initialWeights,finalWeights:ref finalWeights);
         }
     }

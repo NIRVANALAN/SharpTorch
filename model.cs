@@ -57,7 +57,15 @@ namespace cs_nn_fm
             }
 
             //initialize weights
-            InitializeWeights();
+            if (InitialWeights == null)
+            {
+                InitializeWeights();
+            }
+            else
+            {
+                SetWeights(initialWeights:InitialWeights);
+            }
+
             foreach (var t in Layers) // init the nodes
             {
                 if (t.GetType().BaseType != typeof(PropogationLayer)) continue;
@@ -104,7 +112,7 @@ namespace cs_nn_fm
             var w = 0;
             for (int i = 0; i < DIns.Length; i++)
             {
-                for (int j = 0; j < DIns[i]; j++)
+                for (int j = 0; j < DIns[i]+1; j++)//add bias
                 {
                     for (int k = 0; k < DOuts[i]; k++)
                     {

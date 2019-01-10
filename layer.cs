@@ -151,7 +151,7 @@ namespace cs_nn_fm
 //            DIn = numInput;
 //            DOut = numOutput;
             Weights = Helper.MakeMatrix(DIn + 1, DOut); // include biases
-            Helper.InitializeWeights(ref Weights);
+//            Helper.InitializeWeights(ref Weights); // initializeWeights globally
             Grads = Helper.MakeMatrix(DIn + 1, DOut);
             PrevWeightsDelta = Helper.MakeMatrix(DIn + 1, DOut);
             Signals = new double[DOut]; // gradients output signals
