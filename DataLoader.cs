@@ -9,6 +9,8 @@ namespace cs_nn_fm
         private bool _shuffle;
         private int _workers;
         private int _index = 0;
+        public int loopTime { get; set; }
+        private int[] sequence;
 
         public DataLoader(Dataset dataSet, int batchSize, bool shuffle = false, int workers = 1)
         {
@@ -18,32 +20,46 @@ namespace cs_nn_fm
             _workers = workers;
             if (_shuffle)
             {
-                Shuffle(_dataSet);
+                sequence = new int[_dataSet.GetLen()];
+                for (int i = 0; i < sequence.Length; i++)
+                {
+                    sequence[i] = i;
+                }
+
+                Shuffle(sequence);
             }
+
+            loopTime = (int) (dataSet.GetLen() / batchSize);
         }
 
-        private void Shuffle(Dataset dataset)
+        private void Shuffle(int[] sequence)
         {
             var rnd = new Random(1);
-            var allData = dataset.DataSet;
-            for (int i = 0; i < allData.Length; i++)
+            for (int i = 0; i < sequence.Length; ++i)
             {
-                var r = rnd.Next(i, allData.Length);
-                var tmp = allData[r];
-                allData[r] = allData[i];
-                allData[i] = tmp;
+                int r = rnd.Next(i, sequence.Length);
+                int tmp = sequence[r];
+                sequence[r] = sequence[i];
+                sequence[i] = tmp;
             }
         }
 
         public double[][] Enumerate(bool label = false) //TODO label problem
         {
+            if (_index >= _dataSet.GetLen())
+            {
+                _index = 0;
+                Shuffle(sequence); //shuffle
+            }
+
             var res = new double[_batchSize][];
             var end = _index + _batchSize;
-            for (int i = 0; _index < end; i++)
+            for (int i = 0; _index < end&&_index<_dataSet.GetLen(); i++)
             {
-                res[i] = _dataSet.GetItems(_index);
+                res[i] = _dataSet.GetItems(sequence[_index]);
                 _index++;
             }
+
             return res;
         }
 

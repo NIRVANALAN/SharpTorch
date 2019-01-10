@@ -49,8 +49,8 @@ namespace cs_nn_fm
             var hiddenLayer = new Linear(12, 1);
             var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer}); // create model
             const int numEpochs = 500;
-            const double learning_rate = 0.005;
-            const double momentum = 0.001; // need more test
+            const double learning_rate = 0.002;
+            const double momentum = 0.0001; // need more test
             // generate dataSet 
             var sTrainData = new SinTrainData(); // Inherit from DataSet class:generate 1000 items default
             //generate trainData, testData
@@ -59,27 +59,36 @@ namespace cs_nn_fm
             var optimizer = new SGD(model, learning_rate, momentum); // train via sgd
             var dataLoader = new DataLoader(trainSet, 1, true);
             //train using SGD
-            for (int i = 0; i < numEpochs; i++)
+            var epoch = 0;
+            while (epoch < numEpochs)
             {
-                var data = dataLoader.Enumerate(); //[1][x,y]
-                Helper.SplitInputOutput(data, out var inputData, out var outputData);
-                var yPred = model.Forward(inputData[0]); //xValue
-                //compute and print loss
-                var loss = new RegressionLoss(yPred, outputData[0]); //tValue
-                //  Console.WriteLine(loss.Item()); // print loss
-                if (i % 20 == 0 && i > 0) //print epoch & error info
+                epoch++;
+                if (epoch % 10 == 0 && epoch > 0) //print epoch & error info
                 {
                     var mse = Evaluate.MSE(model, testSet);
-                    Console.WriteLine("epoch = " + i + " acc = " + (1 - mse).ToString("F4"));
-//                    Console.WriteLine(" MSE: " + mse.ToString());
+                    Console.WriteLine("epoch = " + epoch + " acc = " + (1 - mse).ToString("F4"));
+                    //                    Console.WriteLine(" MSE: " + mse.ToString());
                 }
 
-                optimizer.Zero_grad(); // refresh buffer before .backward()
-                loss.Backward(); // calculate grads
-                optimizer.Step(); // update weights
+                for (int i = 0; i < dataLoader.loopTime; i++)
+                {
+                    var data = dataLoader.Enumerate(); //[1][x,y]
+//                    Console.WriteLine(i);
+                    Helper.SplitInputOutput(data, out var inputData, out var outputData);
+                    var yPred = model.Forward(inputData[0]); //xValue
+                    //compute and print loss
+                    var loss = new RegressionLoss(yPred, outputData[0]); //tValue
+                    //  Console.WriteLine(loss.Item()); // print loss
+                    optimizer.Zero_grad(); // refresh buffer before .backward()
+                    loss.Backward(); // calculate grads
+                    optimizer.Step(); // update weights
+                }
             }
 
+
             // test
+            var y = model.Forward(new double[] {Math.PI}).PredictedValues;
+            Console.WriteLine("\nActual sin(PI) =  0.0   Predicted =  " + y[0].ToString("F6"));
         }
 
 
