@@ -29,11 +29,13 @@ namespace cs_nn_fm
             Nodes = new double[layers.Length][];
             LayerSum = new double[layers.Length][];
             var flag = 1;
+            InputNum = ((PropogationLayer) layers[0]).DIn;
             foreach (var t in Layers) // check if the model is legal(propogation-Activation)
             {
                 if (flag == 1 && t.GetType().BaseType == typeof(PropogationLayer))
                 {
                     flag = 1 - flag;
+                    OutputNum = ((PropogationLayer) t).DOut;
                     continue;
                 }
                 if (flag==0&& t.GetType().BaseType == typeof(ActivationLayer))
@@ -42,6 +44,7 @@ namespace cs_nn_fm
                 }
 
             }
+
             foreach (var t in Layers) // init the nodes
             {
                 if (t.GetType().BaseType != typeof(PropogationLayer)) continue;

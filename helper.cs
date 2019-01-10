@@ -1,11 +1,21 @@
 using System;
-using System.Data;
 using System.Reflection;
 
 namespace cs_nn_fm
 {
     public class Helper
     {
+        public static void SplitInputOutput(double[][] allData, out double[][] inputData, out double[][] outputData)
+        {
+            inputData = new double[allData.Length][];
+            outputData = new double[allData.Length][];
+            for (int i = 0; i < allData.Length; i++)
+            {
+                inputData[i] = new[]{allData[i][0]};
+                outputData[i] = new[]{allData[i][1]};
+            }
+        }
+
         public static void SplitTrainTest(Dataset allData, double trainPct,
             int seed, out Dataset trainData, out Dataset testData)
         {
@@ -42,8 +52,10 @@ namespace cs_nn_fm
             //parameters
             var trainSetParameters = new object[] {trainRows, trainDataItems, 1, true};
             var testSetParameters = new object[] {testRows, testDataItems, 1, true};
-            trainData = assembly.CreateInstance((allData.GetType()).ToString(),true, System.Reflection.BindingFlags.Default,null,trainSetParameters,null,null) as Dataset; // reflection
-            testData = assembly.CreateInstance(allData.GetType().ToString(), true, System.Reflection.BindingFlags.Default, null, testSetParameters, null, null) as Dataset;
+            trainData = assembly.CreateInstance((allData.GetType()).ToString(), true,
+                BindingFlags.Default, null, trainSetParameters, null, null) as Dataset; // reflection
+            testData = assembly.CreateInstance(allData.GetType().ToString(), true,
+                BindingFlags.Default, null, testSetParameters, null, null) as Dataset;
         } // SplitTrainTest
 
         public static void InitializeWeights(ref double[,] weights, double lo = -0.001, double hi = 0.001,
@@ -85,12 +97,12 @@ namespace cs_nn_fm
             for (int i = 0; i < vector.Length; i++)
             {
                 if (i % line_len == 0 && i > 0) // avoid the state 
-                    System.Console.WriteLine("");
-                System.Console.Write(i.ToString("F" + decimals) + " ");
+                    Console.WriteLine("");
+                Console.Write(i.ToString("F" + decimals) + " ");
             }
 
-            if (new_line == true)
-                System.Console.WriteLine("");
+            if (new_line)
+                Console.WriteLine("");
         }
 
         public static void ShowMatrix(double[][] matrix, int numRows, int decimals, bool indices)
@@ -99,21 +111,21 @@ namespace cs_nn_fm
             for (int i = 0; i < numRows; i++)
             {
                 if (indices)
-                    System.Console.Write("[" + i.ToString().PadLeft(len) + "] ");
+                    Console.Write("[" + i.ToString().PadLeft(len) + "] ");
                 for (int j = 0; j < matrix[i].Length; j++)
                 {
                     var v = matrix[i][j];
                     if (v >= 0.0) //refractor?
-                        System.Console.Write(" "); //'+'
-                    System.Console.Write(v.ToString("F" + decimals) + "  ");
+                        Console.Write(" "); //'+'
+                    Console.Write(v.ToString("F" + decimals) + "  ");
                 }
 
-                System.Console.WriteLine("");
+                Console.WriteLine("");
             }
 
             if (numRows < matrix.Length)
             {
-                System.Console.WriteLine(". . .");
+                Console.WriteLine(". . .");
                 int lastRow = matrix.Length - 1;
                 if (indices)
                     Console.Write("[" + lastRow.ToString().PadLeft(len) + "]");
@@ -121,13 +133,13 @@ namespace cs_nn_fm
                 {
                     var v = matrix[lastRow][j];
                     if (v >= 0.0)
-                        System.Console.Write("  ");
-                    System.Console.Write(v.ToString("F" + decimals) + "  ");
+                        Console.Write("  ");
+                    Console.Write(v.ToString("F" + decimals) + "  ");
                     ;
                 }
             }
 
-            System.Console.WriteLine("\n");
+            Console.WriteLine("\n");
         }
     }
 }

@@ -12,9 +12,9 @@ namespace cs_nn_fm {
         } // clamp{
         public static double HyperTan (double x) // hyperbolic tan
         {
-            if (x < -20)
+            if (x < -45)
                 return -1.0;
-            return x > 20 ? 1.0 : Math.Tanh (x);
+            return x > 45 ? 1.0 : Math.Tanh (x);
         }
         public static double Sigmoid (double x) { // sigmoid activation
             return 1 / (1 + Math.Exp (-x));
