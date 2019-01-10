@@ -8,6 +8,7 @@ namespace cs_nn_fm
         public double LossSum;
         public Model Model;
         public Layer[] Layers;
+        protected double item;
 
         public double[] PredictedValues;
 //        public double Lr; //learning rate
@@ -32,11 +33,18 @@ namespace cs_nn_fm
                 cLayer.Signals = new double[cLayer.DOut];
                 cLayer.PrevWeightsDelta = new double[cLayer.DIn + 1, cLayer.DOut]; // bias included
             }
+
+            CostFunctionDerivative(); // calculate costFunction signal here : polymorphism
         } //ctor
 
         public abstract double Calculate();
 
         public abstract void CostFunctionDerivative();
+
+        public double Item()
+        {
+            return item;
+        }
 
         public void Backward()
         {
@@ -52,7 +60,6 @@ namespace cs_nn_fm
 //                    cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
 //                }
 //            } 
-            CostFunctionDerivative(); // calculate costFunction signal here : polymorphism
 
             //============compute signal and Grads=============
             for (var i = currentLayerIndex; i >= 0; i--) // from output-layer 
@@ -64,7 +71,7 @@ namespace cs_nn_fm
                     {
                         for (var k = 0; k < cLayer.DOut; k++)
                         {
-                            cLayer.Grads[j, k] = cLayer.Signals[k] * Model.Nodes[i/2][j];//  i/2:layer->hidden nodes
+                            cLayer.Grads[j, k] = cLayer.Signals[k] * Model.Nodes[i / 2][j]; //  i/2:layer->hidden nodes
                         }
                     } // calculate weightsGrad
 
@@ -144,10 +151,10 @@ namespace cs_nn_fm
             // Regression, no derivatives calculation....
             var derivative = 1.0; //dummy
             var cLayer = (PropogationLayer) Layers[currentLayerIndex];
-            for (int i = 0; i < cLayer.DOut; i++)
-            {
-                cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
-            }
+//            for (int i = 0; i < cLayer.DOut; i++)
+//            {
+            item = cLayer.Signals[0] = (PredictedValues[0] - TargetValues[0]) * derivative;
+//            }
         }
     }
 

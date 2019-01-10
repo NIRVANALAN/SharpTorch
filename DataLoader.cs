@@ -1,22 +1,52 @@
-﻿namespace cs_nn_fm
-{
-    public class DataLoader//在训练神经网络时，最好是对一个batch的数据进行操作，
-        //同时还需要对数据进行shuffle和并行加速等。
-        //对此，PyTorch提供了DataLoader帮助我们实现这些功能。
-    {
-        private Dataset dataset;
-        private int batchSize;
-        private bool shuffle;//是否将数据打乱
-        private int numWorkers;
+﻿using System;
 
-        public DataLoader(Dataset dataset, int batchSize, bool shuffle=false, int workers=2)
+namespace cs_nn_fm
+{
+    public class DataLoader
+    {
+        private Dataset _dataSet;
+        private int _batchSize;
+        private bool _shuffle;
+        private int _workers;
+        private int _index = 0;
+
+        public DataLoader(Dataset dataSet, int batchSize, bool shuffle = false, int workers = 1)
         {
-            this.dataset = dataset;
-            this.batchSize = batchSize;
-            this.shuffle = shuffle;
-            numWorkers = workers;
+            this._dataSet = dataSet;
+            this._batchSize = batchSize;
+            this._shuffle = shuffle;
+            _workers = workers;
+            if (_shuffle)
+            {
+                Shuffle(_dataSet);
+            }
         }
 
-//        public  TODO
+        private void Shuffle(Dataset dataset)
+        {
+            var rnd = new Random(1);
+            var allData = dataset.DataSet;
+            for (int i = 0; i < allData.Length; i++)
+            {
+                var r = rnd.Next(i, allData.Length);
+                var tmp = allData[r];
+                allData[r] = allData[i];
+                allData[i] = tmp;
+            }
+        }
+
+        public double[][] Enumerate(bool label = false) //TODO label problem
+        {
+            var res = new double[_batchSize][];
+            var end = _index + _batchSize;
+            for (int i = 0; _index < end; i++)
+            {
+                res[i] = _dataSet.GetItems(_index);
+                _index++;
+            }
+            return res;
+        }
+
+        //        public  TODO
     }
 }

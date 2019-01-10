@@ -48,28 +48,39 @@ namespace cs_nn_fm
             var activationLayer1TanH = new HyperTan();
             var hiddenLayer = new Linear(12, 1);
             var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer}); // create model
-            const int numEpochs = 300;
+            const int numEpochs = 500;
             const double learning_rate = 0.005;
             const double momentum = 0.001; // need more test
-            // dataSet 
-            var sTrainData = new SinTrainData(); // generate 1000 items default
+            // generate dataSet 
+            var sTrainData = new SinTrainData(); // Inherit from DataSet class:generate 1000 items default
+            //generate trainData, testData
             Helper.SplitTrainTest(sTrainData, 0.8, 1, trainData: out var trainSet, testData: out var testSet);
 
-            // train via sgd
-            var optimizer = new SGD(model, learning_rate, momentum);
-            // test input and output
-            var test = trainSet.GetItems(0);
-            var testInput = new[] {test[0]};
-            var testOutput = new[] {test[1]};
-            //
-            var yPred = model.Forward(testInput); //TODO need DataLoader in the future
-            //compute and print loss
-            var loss = new RegressionLoss(yPred, testOutput); //TODO DataLoader 
-            //TODO print loss.item()
-            optimizer.Zero_grad(); // refresh buffer before .backward()
-            loss.Backward(); // calculate grads
-            optimizer.Step(); // update weights
-            // debug..........
+            var optimizer = new SGD(model, learning_rate, momentum); // train via sgd
+            var dataLoader = new DataLoader(trainSet, 1, true);
+            //train using SGD
+            for (int i = 0; i < numEpochs; i++)
+            {
+                var data = dataLoader.Enumerate(); //[1][x,y]
+                Helper.SplitInputOutput(data, out var inputData, out var outputData);
+                var yPred = model.Forward(inputData[0]); //xValue
+                //compute and print loss
+                var loss = new RegressionLoss(yPred, outputData[0]); //tValue
+                //  Console.WriteLine(loss.Item()); // print loss
+                if (i%20==0&&i>0)//print epoch & error info
+                {
+                    Console.Write("Epoch: " + i.ToString());
+                    var mse = Evaluate.MSE(model, testSet);
+                    Console.WriteLine(" MSE: " + mse.ToString());
+                }
+
+                optimizer.Zero_grad(); // refresh buffer before .backward()
+                loss.Backward(); // calculate grads
+                optimizer.Step(); // update weights
+            }
+            // test
+
+            ;
         }
     }
 }
