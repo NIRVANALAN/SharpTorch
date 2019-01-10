@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 
 namespace cs_nn_fm
 {

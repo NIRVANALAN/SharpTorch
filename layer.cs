@@ -1,4 +1,6 @@
-﻿namespace cs_nn_fm
+﻿using System;
+
+namespace cs_nn_fm
 {
     public abstract class Layer
     {
@@ -9,8 +11,8 @@
     {
         public int Dimension { get; set; }
         //        protected double[] LayerSum;
-        public abstract double Differentiate(double x);
-        public abstract double[] Calculate(ref double[] LayerSum);
+        public abstract double Differentiate(double x, double a = 0.0);
+        public abstract double[] Calculate(ref double[] LayerSum, double a = 0.0);
     }
 
     public abstract class PropogationLayer : Layer
@@ -31,13 +33,13 @@
 
     class HyperTan : ActivationLayer
     {
-        public override double Differentiate(double x)
+        public override double Differentiate(double x, double a)
         {
             return (1 + x) * (1 - x); //derivative for hyperbolic tan
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
-        public override double[] Calculate(ref double[] LayerSum)
+        public override double[] Calculate(ref double[] LayerSum, double a)
         {
             for (int i = 0; i < LayerSum.Length; i++)
             {
@@ -50,12 +52,12 @@
 
     class ReLU : ActivationLayer
     {
-        public override double Differentiate(double x)
+        public override double Differentiate(double x, double a)
         {
             return x > 0 ? 1.0 : 0;
         }
 
-        public override double[] Calculate(ref double[] LayerSum)
+        public override double[] Calculate(ref double[] LayerSum, double a)
         {
             for (int i = 0; i < LayerSum.Length; i++)
             {
@@ -66,6 +68,61 @@
         }
     }
 
+    class ELU : ActivationLayer
+    {
+        public override double Differentiate(double x, double a)
+        {
+            return x < 0 ? Activation.ELU(x, a) + a : 1;
+            //throw new System.NotImplementedException();
+        }
+
+        public override double[] Calculate(ref double[] LayerSum, double a)
+        {
+            for(int i = 0; i < LayerSum.Length; i++)
+            {
+                LayerSum[i] = Activation.ELU(LayerSum[i], a);
+            }
+            return LayerSum;
+        }
+    }
+
+    class PRelu : ActivationLayer
+    {
+        public override double Differentiate(double x, double a = 0)
+        {
+            return x < 0 ? a : 1;
+            //throw new System.NotImplementedException();
+        }
+
+        public override double[] Calculate(ref double[] LayerSum, double a = 0)
+        {
+            for(int i = 0; i < LayerSum.Length; i++)
+            {
+                LayerSum[i] = Activation.PRelu(LayerSum[i], a);
+            }
+            return LayerSum;
+            //throw new System.NotImplementedException();
+        }
+    }
+
+    class ArcTan : ActivationLayer
+    {
+        public override double Differentiate(double x, double a = 0)
+        {
+            return 1 / (Math.Pow(x, 2) + 1);
+            //throw new System.NotImplementedException();
+        }
+
+        public override double[] Calculate(ref double[] LayerSum, double a = 0)
+        {
+            for(int i = 0; i < LayerSum.Length; i++)
+            {
+                LayerSum[i] = Activation.ArcTan(LayerSum[i]);
+            }
+            return LayerSum;
+            //throw new System.NotImplementedException();
+        }
+    }
 
 
     class Linear : PropogationLayer
