@@ -68,6 +68,25 @@ namespace cs_nn_fm
         }
     }
 
+    class Sigmoid : ActivationLayer
+    {
+        public override double Differentiate(double x, double a = 0)
+        {
+            return Activation.Sigmoid(x) * (1 - Activation.Sigmoid(x));
+            //throw new NotImplementedException();
+        }
+
+        public override double[] Calculate(ref double[] LayerSum, double a = 0)
+        {
+            for(int i = 0; i < LayerSum.Length; i++)
+            {
+                LayerSum[i] = Activation.Sigmoid(LayerSum[i]);
+            }
+            //throw new NotImplementedException();
+            return LayerSum;
+        }
+    }
+
     class ELU : ActivationLayer
     {
         public override double Differentiate(double x, double a)

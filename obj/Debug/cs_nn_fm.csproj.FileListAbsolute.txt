@@ -17,3 +17,9 @@ D:\repos\C#\cs_nn_framework_vs\obj\Debug\cs_nn_fm.csprojAssemblyReference.cache
 D:\repos\C#\cs_nn_framework_vs\obj\Debug\cs_nn_fm.csproj.CoreCompileInputs.cache
 D:\repos\C#\cs_nn_framework_vs\obj\Debug\cs_nn_fm.exe
 D:\repos\C#\cs_nn_framework_vs\obj\Debug\cs_nn_fm.pdb
+C:\Users\carol\Desktop\cs_nn_framework_vs\bin\Debug\cs_nn_fm.exe
+C:\Users\carol\Desktop\cs_nn_framework_vs\bin\Debug\cs_nn_fm.pdb
+C:\Users\carol\Desktop\cs_nn_framework_vs\obj\Debug\cs_nn_fm.csprojAssemblyReference.cache
+C:\Users\carol\Desktop\cs_nn_framework_vs\obj\Debug\cs_nn_fm.csproj.CoreCompileInputs.cache
+C:\Users\carol\Desktop\cs_nn_framework_vs\obj\Debug\cs_nn_fm.exe
+C:\Users\carol\Desktop\cs_nn_framework_vs\obj\Debug\cs_nn_fm.pdb

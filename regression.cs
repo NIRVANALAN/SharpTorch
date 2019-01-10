@@ -67,7 +67,7 @@ namespace cs_nn_fm
                 //compute and print loss
                 var loss = new RegressionLoss(yPred, outputData[0]); //tValue
                 //  Console.WriteLine(loss.Item()); // print loss
-                if (i % 20 == 0 && i > 0) //print epoch & error info
+                if (i % 10 == 0 && i > 0) //print epoch & error info
                 {
                     var mse = Evaluate.MSE(model, testSet);
                     Console.WriteLine("epoch = " + i + " acc = " + (1 - mse).ToString("F4"));
