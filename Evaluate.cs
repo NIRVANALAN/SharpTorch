@@ -9,6 +9,7 @@ namespace cs_nn_fm
         {
             // MSE : average squared error per training item
 //            var data = model.Nodes;
+//            均方方差
             var sumSquaredErr = 0.0;
             var inputNum = model.InputNum;
             var outputNum = model.OutputNum;
