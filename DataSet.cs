@@ -29,6 +29,11 @@ namespace cs_nn_fm
         //TODO
     }
 
+    class MyClass
+    {
+        
+    }
+
 
     class SinTrainData : DataSet2D
     {
