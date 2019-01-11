@@ -63,7 +63,7 @@ namespace cs_nn_fm
             }
             else
             {
-                SetWeights(initialWeights:InitialWeights);
+                SetWeights(initialWeights: InitialWeights);
             }
 
             foreach (var t in Layers) // init the nodes
@@ -84,7 +84,7 @@ namespace cs_nn_fm
                     Nodes[LayerNum] = new double[cLayer.DOut + 1];
                     Nodes[LayerNum][cLayer.DOut] = 1; // for bias
                     LayerSum[LayerNum] = new double[cLayer.DOut + 1];
-                    LayerSum[LayerNum][cLayer.DOut] = 1; //for bias
+//                    LayerSum[LayerNum][cLayer.DOut] = 1; //for bias
                 }
                 else
                 {
@@ -112,7 +112,7 @@ namespace cs_nn_fm
             var w = 0;
             for (int i = 0; i < DIns.Length; i++)
             {
-                for (int j = 0; j < DIns[i]+1; j++)//add bias
+                for (int j = 0; j < DIns[i] + 1; j++) //add bias
                 {
                     for (int k = 0; k < DOuts[i]; k++)
                     {
@@ -124,8 +124,16 @@ namespace cs_nn_fm
 
         public Model Forward(double[] XValues)
         {
-            //check input dimension
-            if (XValues.Length + 1 != Nodes[0].Length)
+            foreach (var item in LayerSum) // zero_layerSum
+            {
+                if (item != null)
+                {
+                    Array.Clear(item, 0, item.Length);
+
+                }
+            }
+
+            if (XValues.Length + 1 != Nodes[0].Length) //check input dimension
             {
                 throw new Exception("Input x_value not compatible");
             }

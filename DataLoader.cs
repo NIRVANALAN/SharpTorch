@@ -49,7 +49,10 @@ namespace cs_nn_fm
             if (_index >= _dataSet.GetLen())
             {
                 _index = 0;
-                Shuffle(sequence); //shuffle
+                if (_shuffle)
+                {
+                    Shuffle(sequence); //shuffle
+                }
             }
 
             var res = new double[_batchSize][];

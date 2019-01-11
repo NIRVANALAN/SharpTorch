@@ -11,13 +11,13 @@ namespace cs_nn_fm
             outputData = new double[allData.Length][];
             for (int i = 0; i < allData.Length; i++)
             {
-                inputData[i] = new[]{allData[i][0]};
-                outputData[i] = new[]{allData[i][1]};
+                inputData[i] = new[] {allData[i][0]};
+                outputData[i] = new[] {allData[i][1]};
             }
         }
 
         public static void SplitTrainTest(Dataset allData, double trainPct,
-            int seed, out Dataset trainData, out Dataset testData)
+            int seed, out Dataset trainData, out Dataset testData, bool shuffle_flag = false)
         {
             Random rnd = new Random(seed);
             var allDataItems = allData.DataSet;
@@ -33,12 +33,15 @@ namespace cs_nn_fm
             for (int i = 0; i < copy.Length; ++i)
                 copy[i] = allDataItems[i];
 
-            for (int i = 0; i < copy.Length; ++i) // scramble order
+            if (shuffle_flag)
             {
-                int r = rnd.Next(i, copy.Length); // use Fisher-Yates
-                double[] tmp = copy[r];
-                copy[r] = copy[i];
-                copy[i] = tmp;
+                for (int i = 0; i < copy.Length; ++i) // scramble order
+                {
+                    int r = rnd.Next(i, copy.Length); // use Fisher-Yates
+                    double[] tmp = copy[r];
+                    copy[r] = copy[i];
+                    copy[i] = tmp;
+                }
             }
 
             for (int i = 0; i < trainRows; ++i)
@@ -92,26 +95,27 @@ namespace cs_nn_fm
             return res;
         }
 
-        public static void ShowVector(double[] vector, int decimals, int line_len, bool new_line)
+        public static void ShowVector(double[] vector, int decimals = 9, int line_len = 6, bool new_line = true)
         {
             for (int i = 0; i < vector.Length; i++)
             {
                 if (i % line_len == 0 && i > 0) // avoid the state 
                     Console.WriteLine("");
-                Console.Write(i.ToString("F" + decimals) + " ");
+                Console.Write(vector[i].ToString("F" + decimals) + " ");
             }
 
             if (new_line)
                 Console.WriteLine("");
         }
 
-        public static void ShowMatrix(double[][] matrix, int numRows, int decimals, bool indices)
+        public static void ShowMatrix(double[][] matrix, int numRows, int decimals = 10, bool indices = true)
         {
-            int len = matrix.Length.ToString().Length; // refractor?
-            if (len<numRows)
+            int len = matrix.Length; // refractor?
+            if (len < numRows)
             {
                 numRows = len;
             }
+
             for (int i = 0; i < numRows; i++)
             {
                 if (indices)
@@ -136,6 +140,48 @@ namespace cs_nn_fm
                 for (int j = 0; j < matrix[lastRow].Length; j++)
                 {
                     var v = matrix[lastRow][j];
+                    if (v >= 0.0)
+                        Console.Write("  ");
+                    Console.Write(v.ToString("F" + decimals) + "  ");
+                    ;
+                }
+            }
+
+            Console.WriteLine("\n");
+        }
+
+        public static void ShowMatrix(double[,] matrix, int numRows = 12, int decimals = 10, bool indices = true)
+        {
+            int len = matrix.GetLength(0); // refractor?
+            if (len < numRows)
+            {
+                numRows = len;
+            }
+
+            for (int i = 0; i < numRows; i++)
+            {
+                if (indices)
+                    Console.Write("[" + i.ToString().PadLeft(len) + "] ");
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    var v = matrix[i, j];
+                    if (v >= 0.0) //refractor?
+                        Console.Write(" "); //'+'
+                    Console.Write(v.ToString("F" + decimals) + "  ");
+                }
+
+                Console.WriteLine("");
+            }
+
+            if (numRows < matrix.GetLength(0))
+            {
+                Console.WriteLine(". . .");
+                int lastRow = matrix.Length - 1;
+                if (indices)
+                    Console.Write("[" + lastRow.ToString().PadLeft(len) + "]");
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    var v = matrix[lastRow, j];
                     if (v >= 0.0)
                         Console.Write("  ");
                     Console.Write(v.ToString("F" + decimals) + "  ");
