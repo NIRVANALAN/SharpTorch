@@ -5,7 +5,7 @@ namespace cs_nn_fm
     internal class Program
     {
         public void ManualPropSin(SinTrainData sTrainData, int numMaxEpochs, bool shuffle_flag,
-            out double[] InitialWeights, out double[] FinalWeights)
+            out double[] InitialWeights, out double[] FinalWeights, bool debug = false)
         {
             Console.WriteLine("NN Regression for predicting sin(x) begin:");
             // create training data 
@@ -31,7 +31,9 @@ namespace cs_nn_fm
             InitialWeights = nn.GetWeights();
             Console.WriteLine("Initial weights");
             Helper.ShowVector(InitialWeights, 6, 8, true);
-            FinalWeights = nn.Train(sTrainData, numMaxEpochs, lr, momentum, shuffle_flag, ref InitialWeights);
+            FinalWeights = nn.Train(sTrainData, numMaxEpochs, lr, momentum, shuffle_flag, ref InitialWeights, debug);
+            Console.WriteLine("final weights after training");
+            Helper.ShowVector(FinalWeights);
             // show model
 //            System.Console.WriteLine("Final model weights:");
 //            Helper.ShowVector(weights, 4, 4, true);
@@ -104,6 +106,7 @@ namespace cs_nn_fm
 
         static void Main(string[] args)
         {
+            var epochNum = 1;
             var program = new Program();
             var testDataSet = new double[5][];
             testDataSet[0] = new double[] {Math.PI, Math.Sin(Math.PI)};
@@ -112,12 +115,11 @@ namespace cs_nn_fm
             testDataSet[3] = new double[] {Math.PI * 2, Math.Sin(Math.PI * 2)};
             testDataSet[4] = new double[] {Math.PI * 3 / 2, Math.Sin(Math.PI * 3 / 2)};
             var sTrainData = new SinTrainData(dataSet: testDataSet, provideDataFlag: true);
-//            var sTrainData = new SinTrainData(dataSet: new double[1][] {new double[] {1, Math.Sin(1)}},
-//                provideDataFlag: true);
-            program.ManualPropSin(sTrainData, 1, false, InitialWeights: out var initialWeights,
-                FinalWeights: out var finalWeights);
+//            var sTrainData = new SinTrainData(500);
+            program.ManualPropSin(sTrainData, epochNum, false, InitialWeights: out var initialWeights,
+                FinalWeights: out var finalWeights, debug: true);
             Console.WriteLine("");
-            program.RegressionUsingFrameWork(sTrainData, false, 1, initialWeights: ref initialWeights,
+            program.RegressionUsingFrameWork(sTrainData, false, epochNum, initialWeights: ref initialWeights,
                 finalWeights: ref finalWeights);
         }
     }

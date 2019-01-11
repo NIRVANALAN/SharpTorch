@@ -101,7 +101,11 @@ namespace cs_nn_fm
 
         public double[] Forward(double[] x_values, bool debug = false)
         {
-            Console.WriteLine("input:" + x_values[0]);
+            if (debug)
+            {
+                Console.WriteLine("input:" + x_values[0]);
+            }
+
             // preliminary values
             var hSums = new double[_numHidden]; // scratch array
             var oSums = new double[_numOutput];
@@ -126,6 +130,7 @@ namespace cs_nn_fm
                 Console.WriteLine("hSum");
                 Helper.ShowVector(hSums, 8, 12, true);
             }
+
             //activation
             for (int j = 0; j < _numHidden; j++)
             {
@@ -161,12 +166,16 @@ namespace cs_nn_fm
             Array.Copy(oSums, _outputs, _outputs.Length);
             double[] resRes = new double[_numOutput];
             Array.Copy(_outputs, resRes, resRes.Length); // copy res_res to output[]
-            Console.WriteLine("output:" + _outputs[0]);
+            if (debug)
+            {
+                Console.WriteLine("output:" + _outputs[0]);
+            }
+
             return resRes;
         }
 
         public double[] Train(Dataset data_set, int max_epochs, double lr, double momentum, bool shuffle_flag,
-            ref double[] weights)
+            ref double[] weights, bool debug = false)
         {
             Console.WriteLine("stochastic back propogation training start:");
             // back-prop specific arrays
@@ -196,7 +205,7 @@ namespace cs_nn_fm
                 sequence[i] = i;
             }
 
-            var errInterval = 1 + max_epochs / 50; // interval to check validation data
+            var errInterval = 1 + max_epochs / 40; // interval to check validation data
             var trainData = data_set.DataSet;
             while (epoch < max_epochs)
             {
@@ -219,7 +228,7 @@ namespace cs_nn_fm
                     int idx = sequence[ii];
                     Array.Copy(trainData[idx], xValues, _numInput);
                     Array.Copy(trainData[idx], _numInput, tValues, 0, _numOutput);
-                    Forward(xValues); // res_outupt has been copied to output[]
+                    Forward(xValues,debug); // res_outupt has been copied to output[]
 
                     // i=inputs j=hidden(s) k=outputs
                     // 1. compute output nodes signals
@@ -227,6 +236,12 @@ namespace cs_nn_fm
                     {
                         var derivatives = 1.0; // dummy
                         oSignals[k] = (_outputs[k] - tValues[k]) * derivatives;
+                    }
+
+                    if (debug)
+                    {
+                        Console.WriteLine("oSignals:");
+                        Helper.ShowVector(oSignals);
                     }
 
                     // 2. compute h-to-o weights gradients using output signals
@@ -238,10 +253,22 @@ namespace cs_nn_fm
                         }
                     }
 
+                    if (debug)
+                    {
+                        Console.WriteLine("hoGrads");
+                        Helper.ShowMatrix(hoGrads);
+                    }
+
                     // 2'. compute the output biases grads using output signals
                     for (int k = 0; k < _numOutput; k++)
                     {
                         obGrads[k] = oSignals[k] * 1.0; // dummy
+                    }
+
+                    if (debug)
+                    {
+                        Console.WriteLine("obgrads");
+                        Helper.ShowVector(obGrads);
                     }
 
                     // 3.compute hidden nodes signals
@@ -257,6 +284,12 @@ namespace cs_nn_fm
                         hSignals[j] = sum * derivatives;
                     }
 
+                    if (debug)
+                    {
+                        Console.WriteLine("hSignals");
+                        Helper.ShowVector(hSignals);
+                    }
+
                     // 4. compute input-hidden weights grads
                     for (int i = 0; i < _numInput; i++)
                     {
@@ -266,10 +299,22 @@ namespace cs_nn_fm
                         }
                     }
 
+                    if (debug)
+                    {
+                        Console.WriteLine("ihGrads");
+                        Helper.ShowMatrix(ihGrad);
+                    }
+
                     // 4.b compute input-hidden biases grads
                     for (int j = 0; j < _numHidden; j++)
                     {
                         hbGrad[j] = hSignals[j] * 1.0; // dummy 1.0 input
+                    }
+
+                    if (debug)
+                    {
+                        Console.WriteLine("ihBiasGrads");
+                        Helper.ShowVector(hbGrad);
                     }
 
                     // ========begin update here==========
@@ -286,6 +331,14 @@ namespace cs_nn_fm
                         }
                     }
 
+                    if (debug)
+                    {
+                        Console.WriteLine("ih_weights after update");
+                        Helper.ShowMatrix(ih_weights);
+                        Console.WriteLine("ih_p_W_delta after update");
+                        Helper.ShowMatrix(ihPrevWeightsDelta);
+                    }
+
                     //2. update hidden biases
                     for (int j = 0; j < _numHidden; j++)
                     {
@@ -293,6 +346,14 @@ namespace cs_nn_fm
                         _hBiases[j] -= delta;
                         _hBiases[j] -= hPrevBiasesDelta[j] * momentum;
                         hPrevBiasesDelta[j] = delta;
+                    }
+
+                    if (debug)
+                    {
+                        Console.WriteLine("_hBias after update");
+                        Helper.ShowVector(_hBiases);
+                        Console.WriteLine("h_p_W_delta after update");
+                        Helper.ShowVector(hPrevBiasesDelta);
                     }
 
                     //3.update hidden-output weights
@@ -307,13 +368,29 @@ namespace cs_nn_fm
                         }
                     }
 
+                    if (debug)
+                    {
+                        Console.WriteLine("ho_weights after update");
+                        Helper.ShowMatrix(_hoWeights);
+                        Console.WriteLine("ho_p_W_delta after update");
+                        Helper.ShowMatrix(hoPrevWeightsDelta);
+                    }
+
                     //4.update output biases
                     for (int k = 0; k < _numOutput; k++)
                     {
                         var delta = obGrads[k] * lr;
-                        obGrads[k] -= delta;
-                        obGrads[k] -= oPrevBiasesDelta[k] * momentum;
+                        _oBiases[k] -= delta;
+                        _oBiases[k] -= oPrevBiasesDelta[k] * momentum;
                         oPrevBiasesDelta[k] = delta;
+                    }
+
+                    if (debug)
+                    {
+                        Console.WriteLine("_oBias after update");
+                        Helper.ShowVector(_oBiases);
+                        Console.WriteLine("h_p_W_delta after update");
+                        Helper.ShowVector(oPrevBiasesDelta);
                     }
                 } //each training item
             } // end while(each epoch)
