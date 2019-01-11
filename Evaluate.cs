@@ -5,7 +5,7 @@ namespace cs_nn_fm
 {
     public class Evaluate // TODO need more test
     {
-        public static double MSE(Model model, Dataset testSet)// use testSet to test,TODO use dataLoader in the future
+        public static double MSE(Model model, Dataset testSet, string reduction = "sum")// use testSet to test,TODO use dataLoader in the future
         {
             // MSE : average squared error per training item
 //            var data = model.Nodes;

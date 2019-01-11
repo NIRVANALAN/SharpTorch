@@ -122,6 +122,24 @@ namespace cs_nn_fm
             }
         }
 
+        public double[] GetWeights()
+        {
+            var finalWeights = new double[WeightsNum];
+            var w = 0;
+            for (int i = 0; i < DIns.Length; i++)
+            {
+                for (int j = 0; j < DIns[i]+1; j++)
+                {
+                    for (int k = 0; k < DOuts[i]; k++)
+                    {
+                        finalWeights[w++] = ((PropogationLayer) Layers[i * 2]).Weights[j, k];
+                    }
+                }
+            }
+
+            return finalWeights;
+        }
+
         public Model Forward(double[] XValues)
         {
             foreach (var item in LayerSum) // zero_layerSum

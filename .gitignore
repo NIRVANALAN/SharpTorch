@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs/cs_nn_fm/v15
+bin/Debug/cs_nn_fm.exe
+bin/Debug/cs_nn_fm.pdb
+obj/Debug/cs_nn_fm.exe
+obj/Debug/cs_nn_fm.pdb
+
