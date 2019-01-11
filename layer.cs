@@ -6,10 +6,10 @@ namespace cs_nn_fm
     {
     }
 
-
     public abstract class ActivationLayer : Layer
     {
         public int Dimension { get; set; }
+
         //        protected double[] LayerSum;
         public abstract double Differentiate(double x, double a = 0.0);
         public abstract double[] Calculate(ref double[] LayerSum, double a = 0.0);
@@ -31,6 +31,28 @@ namespace cs_nn_fm
         }
     }
 
+//    public abstract class CostLayer : ActivationLayer
+//    {
+//
+//    }
+    //CostLayer below
+    class SoftMax:ActivationLayer
+    {
+        public override double Differentiate(double x, double a = 0)
+        {
+            return (1 - x) * x;
+//            throw new NotImplementedException();
+        }
+
+        public override double[] Calculate(ref double[] LayerSum, double a = 0)
+        {
+            return Activation.Softmax(LayerSum);
+//            throw new NotImplementedException();
+        }
+    }
+
+
+    // activationLayer below
     class HyperTan : ActivationLayer
     {
         public override double Differentiate(double x, double a)
@@ -78,10 +100,11 @@ namespace cs_nn_fm
 
         public override double[] Calculate(ref double[] LayerSum, double a = 0)
         {
-            for(int i = 0; i < LayerSum.Length; i++)
+            for (int i = 0; i < LayerSum.Length; i++)
             {
                 LayerSum[i] = Activation.Sigmoid(LayerSum[i]);
             }
+
             //throw new NotImplementedException();
             return LayerSum;
         }
@@ -97,10 +120,11 @@ namespace cs_nn_fm
 
         public override double[] Calculate(ref double[] LayerSum, double a)
         {
-            for(int i = 0; i < LayerSum.Length; i++)
+            for (int i = 0; i < LayerSum.Length; i++)
             {
                 LayerSum[i] = Activation.ELU(LayerSum[i], a);
             }
+
             return LayerSum;
         }
     }
@@ -115,10 +139,11 @@ namespace cs_nn_fm
 
         public override double[] Calculate(ref double[] LayerSum, double a = 0)
         {
-            for(int i = 0; i < LayerSum.Length; i++)
+            for (int i = 0; i < LayerSum.Length; i++)
             {
                 LayerSum[i] = Activation.PRelu(LayerSum[i], a);
             }
+
             return LayerSum;
             //throw new System.NotImplementedException();
         }
@@ -134,19 +159,24 @@ namespace cs_nn_fm
 
         public override double[] Calculate(ref double[] LayerSum, double a = 0)
         {
-            for(int i = 0; i < LayerSum.Length; i++)
+            for (int i = 0; i < LayerSum.Length; i++)
             {
                 LayerSum[i] = Activation.ArcTan(LayerSum[i]);
             }
+
             return LayerSum;
             //throw new System.NotImplementedException();
         }
     }
 
+    // propogation layer below
+    class Conv2D // todo
+    {
 
+    }
     class Linear : PropogationLayer
     {
-        public Linear(int numInput, int numOutput) : base(numInput,numOutput)
+        public Linear(int numInput, int numOutput) : base(numInput, numOutput)
         {
 //            DIn = numInput;
 //            DOut = numOutput;
