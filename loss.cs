@@ -158,6 +158,45 @@ namespace cs_nn_fm
         }
     }
 
+    public class SoftmaxLoss : Loss
+    {
+        public SoftmaxLoss(Model model, double[] targetValues) : base(model, targetValues)
+        {
+        }
+
+        public override double Calculate()
+        {
+            var max = 0.0;
+            for (int i = 0; i < PredictedValues.Length; i++)
+            {
+                if (PredictedValues[i]>max)
+                {
+                    max = PredictedValues[i];
+                }
+            }
+            return max;
+            throw new NotImplementedException();
+        }
+
+        public override void CostFunctionDerivative()
+        {
+            // has been calculated in softmax layer, pass
+
+
+//            var currentLayerIndex = Layers.Length - 1; // for output layer
+//            if (Layers[currentLayerIndex].GetType().BaseType != typeof(PropogationLayer))
+//                throw new Exception("Do not accept this type of Class here:" + Layers[currentLayerIndex].GetType());
+//            var cLayer = (PropogationLayer) Layers[currentLayerIndex];
+//            for (int i = 0; i < cLayer.DOut; i++)
+//            {
+//                var derivative = (1 - PredictedValues[i]) * PredictedValues[i];
+//                cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
+//            }
+
+//            throw new NotImplementedException();
+        }
+    }
+
     public class MSELoss : Loss
     {
         public override double Calculate()

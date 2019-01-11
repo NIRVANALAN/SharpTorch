@@ -16,6 +16,7 @@ namespace cs_nn_fm
             }
         }
 
+        //split TrainSet and OutputSet using reflection
         public static void SplitTrainTest(Dataset allData, double trainPct,
             int seed, out Dataset trainData, out Dataset testData, bool shuffle_flag = false)
         {
@@ -190,6 +191,51 @@ namespace cs_nn_fm
             }
 
             Console.WriteLine("\n");
+        }
+
+        public static double[][] GenerateClassificationModelData(Model model, int numRows, int seed = 1,
+            double inputLow = -10, double inputHigh = 10.0)
+        {
+            Random rnd = new Random(seed);
+            int weightsNum = model.WeightsNum;
+
+            double[][] result = new double[numRows][]; // allocate return-result
+            for (int i = 0; i < numRows; ++i)
+                result[i] = new double[model.InputNum + model.OutputNum]; // 1-of-N in last column
+
+            for (int r = 0; r < numRows; ++r) // for each row
+            {
+                // generate random inputs
+                double[] inputs = new double[model.InputNum];
+                for (int i = 0; i < inputs.Length; ++i)
+                    inputs[i] = (inputHigh-inputLow)* rnd.NextDouble() +inputLow; // [-10.0 to -10.0] by default
+
+                // compute outputs
+                double[] outputs = model.Forward(inputs).PredictedValues;
+
+                // translate outputs to 1-of-N. Especially for classification
+                double[] oneOfN = new double[model.OutputNum]; // all 0.0
+
+                var maxIndex = 0;
+                var maxValue = outputs[0];
+                for (var i = 0; i < model.OutputNum; ++i)
+                {
+                    if (!(outputs[i] > maxValue)) continue;
+                    maxIndex = i;
+                    maxValue = outputs[i];
+                }
+
+                oneOfN[maxIndex] = 1.0;
+
+                // place inputs and 1-of-N output values into curr row
+                int c = 0; // column into result[][]
+                for (int i = 0; i < model.InputNum; ++i) // inputs
+                    result[r][c++] = inputs[i];
+                for (int i = 0; i < model.OutputNum; ++i) // outputs
+                    result[r][c++] = oneOfN[i];
+            } // each row
+
+            return result;
         }
     }
 }

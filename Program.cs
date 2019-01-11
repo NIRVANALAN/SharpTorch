@@ -121,11 +121,22 @@ namespace cs_nn_fm
         }
 
 
-        static void Main(string[] args)//TODO 加入新的两种训练方法 | 加入softmax激活函数 |  MSE reductin
+        public void ClassificationUsingSoftmax()
         {
-            var epochNum = 100;
+            var inputLayer = new Linear(1, 12);
+            var activationLayer1TanH = new HyperTan();
+            var hiddenLayer = new Linear(12, 1);
+            var softmaxLayer = new SoftMax();
+            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer, softmaxLayer});
+            // implement yourself~~
+
+        }
+
+        static void Main(string[] args)//TODO 加入新的两种训练方法
+        {
+            var epochNum = 1000;
             var program = new Program();
-            var sTrainData = new SinTrainData(500);
+            var sTrainData = new SinTrainData(1000);
             var initialWeights = new double[1];//tmp
 //            program.ManualPropSin(sTrainData, epochNum, false, InitialWeights: out var initialWeights,
 //                FinalWeights: out var finalWeights, debug: false);

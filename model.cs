@@ -18,11 +18,15 @@ namespace cs_nn_fm
         public int[] DIns;
         public int[] DOuts;
         public double[] InitialWeights;
+        private double lo;
+        private double hi;
 
 
-        public Model(Layer[] layers, double[] weights = null)
+        public Model(Layer[] layers, double lo=-0.001, double hi=0.001, double[] weights = null)
         {
             Layers = layers;
+            this.lo = lo;
+            this.hi = hi;
             InitialWeights = weights;
             LayerNum = 0;
             Nodes = new double[layers.Length][];
@@ -59,7 +63,7 @@ namespace cs_nn_fm
             //initialize weights
             if (InitialWeights == null)
             {
-                InitializeWeights();
+                InitializeWeights(lo,hi);
             }
             else
             {
