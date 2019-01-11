@@ -11,7 +11,7 @@ namespace cs_nn_fm
             // create training data 
 //            var sTrainData = new SinTrainData(500);
             System.Console.WriteLine("\nTraining data:");
-            Helper.ShowMatrix(sTrainData.DataSet, 10, 4, true);
+            Helper.ShowMatrix(sTrainData.DataSet, 5, 4, true);
             // create NN 
             const int numInput = 1;
             var numHidden = 12;
@@ -27,8 +27,10 @@ namespace cs_nn_fm
             Console.WriteLine("Setting learnRate = " + lr.ToString("F4"));
             Console.WriteLine("Setting momentum  = " + momentum.ToString("F4"));
             // train NN 
-            InitialWeights = new double[37];//just for test
+            InitialWeights = new double[37]; //just for test
             InitialWeights = nn.GetWeights();
+            Console.WriteLine("Initial weights");
+            Helper.ShowVector(InitialWeights, 6, 8, true);
             FinalWeights = nn.Train(sTrainData, numMaxEpochs, lr, momentum, shuffle_flag, ref InitialWeights);
             // show model
 //            System.Console.WriteLine("Final model weights:");
@@ -45,16 +47,18 @@ namespace cs_nn_fm
 //            Console.WriteLine("\nActual sin(3*PI / 2) = -1.0   Predicted = " + y[0].ToString("F6"));
         }
 
-        public void RegressionUsingFrameWork(SinTrainData sinTrainData, bool shuffle_flag, int numEpochs, ref double[] initialWeights, ref double[] finalWeights)
+        public void RegressionUsingFrameWork(SinTrainData sinTrainData, bool shuffle_flag, int numEpochs,
+            ref double[] initialWeights, ref double[] finalWeights)
         {
             var inputLayer = new Linear(1, 12);
             var activationLayer1TanH = new HyperTan();
             var hiddenLayer = new Linear(12, 1);
-            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer},initialWeights); // create model
+            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer},
+                initialWeights); // create model
 
 //            const int numEpochs = 1;
-            const double learning_rate = 0.002;
-            const double momentum = 0.0001; // need more test
+            const double learning_rate = 0.005;
+            const double momentum = 0.001; // need more test
             // generate dataSet 
 //            var sinTrainData = new SinTrainData(); // Inherit from DataSet class:generate 1000 items default
             //generate trainData, testData
@@ -64,7 +68,7 @@ namespace cs_nn_fm
             var dataLoader = new DataLoader(trainSet, 1, shuffle_flag);
             //train using SGD
             var epoch = 0;
-            var epochInternal = 1 + trainSet.GetLen() / 50;
+            var epochInternal = 2 + trainSet.GetLen() / 50;
             while (epoch < numEpochs)
             {
                 epoch++;
@@ -81,7 +85,7 @@ namespace cs_nn_fm
 //                    Console.WriteLine(i);
                     Helper.SplitInputOutput(data, out var inputData, out var outputData);
                     var yPred = model.Forward(inputData[0]); //xValue
-                    Console.WriteLine("framework output:"+yPred.PredictedValues[0]);
+                    Console.WriteLine("framework output:" + yPred.PredictedValues[0]);
                     //compute and print loss
                     var loss = new RegressionLoss(yPred, outputData[0]); //tValue
                     //  Console.WriteLine(loss.Item()); // print loss
@@ -101,12 +105,20 @@ namespace cs_nn_fm
         static void Main(string[] args)
         {
             var program = new Program();
-            var sTrainData = new SinTrainData(5);
+            var testDataSet = new double[5][];
+            testDataSet[0] = new double[] {Math.PI, Math.Sin(Math.PI)};
+            testDataSet[1] = new double[] {Math.PI / 2, Math.Sin(Math.PI / 2)};
+            testDataSet[2] = new double[] {Math.PI / 3, Math.Sin(Math.PI / 3)};
+            testDataSet[3] = new double[] {Math.PI * 2, Math.Sin(Math.PI * 2)};
+            testDataSet[4] = new double[] {Math.PI * 3 / 2, Math.Sin(Math.PI * 3 / 2)};
+            var sTrainData = new SinTrainData(dataSet: testDataSet, provideDataFlag: true);
 //            var sTrainData = new SinTrainData(dataSet: new double[1][] {new double[] {1, Math.Sin(1)}},
 //                provideDataFlag: true);
             program.ManualPropSin(sTrainData, 1, false, InitialWeights: out var initialWeights,
                 FinalWeights: out var finalWeights);
-            program.RegressionUsingFrameWork(sTrainData, false, 1, initialWeights:ref initialWeights,finalWeights:ref finalWeights);
+            Console.WriteLine("");
+            program.RegressionUsingFrameWork(sTrainData, false, 1, initialWeights: ref initialWeights,
+                finalWeights: ref finalWeights);
         }
     }
 }

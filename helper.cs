@@ -11,13 +11,13 @@ namespace cs_nn_fm
             outputData = new double[allData.Length][];
             for (int i = 0; i < allData.Length; i++)
             {
-                inputData[i] = new[]{allData[i][0]};
-                outputData[i] = new[]{allData[i][1]};
+                inputData[i] = new[] {allData[i][0]};
+                outputData[i] = new[] {allData[i][1]};
             }
         }
 
         public static void SplitTrainTest(Dataset allData, double trainPct,
-            int seed, out Dataset trainData, out Dataset testData)
+            int seed, out Dataset trainData, out Dataset testData, bool shuffle_flag = false)
         {
             Random rnd = new Random(seed);
             var allDataItems = allData.DataSet;
@@ -33,12 +33,15 @@ namespace cs_nn_fm
             for (int i = 0; i < copy.Length; ++i)
                 copy[i] = allDataItems[i];
 
-            for (int i = 0; i < copy.Length; ++i) // scramble order
+            if (shuffle_flag)
             {
-                int r = rnd.Next(i, copy.Length); // use Fisher-Yates
-                double[] tmp = copy[r];
-                copy[r] = copy[i];
-                copy[i] = tmp;
+                for (int i = 0; i < copy.Length; ++i) // scramble order
+                {
+                    int r = rnd.Next(i, copy.Length); // use Fisher-Yates
+                    double[] tmp = copy[r];
+                    copy[r] = copy[i];
+                    copy[i] = tmp;
+                }
             }
 
             for (int i = 0; i < trainRows; ++i)
@@ -98,7 +101,7 @@ namespace cs_nn_fm
             {
                 if (i % line_len == 0 && i > 0) // avoid the state 
                     Console.WriteLine("");
-                Console.Write(i.ToString("F" + decimals) + " ");
+                Console.Write(vector[i].ToString("F" + decimals) + " ");
             }
 
             if (new_line)
@@ -107,11 +110,12 @@ namespace cs_nn_fm
 
         public static void ShowMatrix(double[][] matrix, int numRows, int decimals, bool indices)
         {
-            int len = matrix.Length.ToString().Length; // refractor?
-            if (len<numRows)
+            int len = matrix.Length; // refractor?
+            if (len < numRows)
             {
                 numRows = len;
             }
+
             for (int i = 0; i < numRows; i++)
             {
                 if (indices)

@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Text;
 
 namespace cs_nn_fm
 {
@@ -99,8 +99,9 @@ namespace cs_nn_fm
             return res; // tmp
         }
 
-        public double[] Forward(double[] x_values)
+        public double[] Forward(double[] x_values, bool debug = false)
         {
+            Console.WriteLine("input:" + x_values[0]);
             // preliminary values
             var hSums = new double[_numHidden]; // scratch array
             var oSums = new double[_numOutput];
@@ -116,14 +117,27 @@ namespace cs_nn_fm
                 hSums[j] += _inputs[i] * ih_weights[i, j]; // full-connect network
             }
 
+
             // add the bias
             for (int j = 0; j < _numHidden; j++)
                 hSums[j] += _hBiases[j];
+            if (debug)
+            {
+                Console.WriteLine("hSum");
+                Helper.ShowVector(hSums, 8, 12, true);
+            }
             //activation
             for (int j = 0; j < _numHidden; j++)
             {
                 _hiddens[j] = Activation.HyperTan(hSums[j]);
             }
+
+            if (debug)
+            {
+                Console.WriteLine("after activation hsum");
+                Helper.ShowVector(hSums, 8, 12, true);
+            }
+
 
             for (int k = 0; k < _numOutput; k++)
             for (int j = 0; j < _numHidden; j++)
@@ -136,17 +150,25 @@ namespace cs_nn_fm
                 oSums[k] += _oBiases[k];
             }
 
+            if (debug)
+            {
+                Console.WriteLine("after add biases oSum");
+                Helper.ShowVector(oSums, 8, 12, true);
+            }
+
+
             // no softmax activation in regression applied. Just copy
             Array.Copy(oSums, _outputs, _outputs.Length);
             double[] resRes = new double[_numOutput];
             Array.Copy(_outputs, resRes, resRes.Length); // copy res_res to output[]
-            Console.WriteLine("output:"+_outputs[0]);
+            Console.WriteLine("output:" + _outputs[0]);
             return resRes;
         }
 
-        public double[] Train(Dataset data_set, int max_epochs, double lr, double momentum, bool shuffle_flag, ref double[] weights)
+        public double[] Train(Dataset data_set, int max_epochs, double lr, double momentum, bool shuffle_flag,
+            ref double[] weights)
         {
-            System.Console.WriteLine("stochastic back propogation training start:");
+            Console.WriteLine("stochastic back propogation training start:");
             // back-prop specific arrays
             var hoGrads = Helper.MakeMatrix(_numHidden, _numOutput, 0.0); // hidden-output grad
             var obGrads = new double[_numOutput]; // output bias grad
@@ -191,6 +213,7 @@ namespace cs_nn_fm
                 {
                     Shuffle(sequence); // shuffle the order
                 }
+
                 for (int ii = 0; ii < trainData.Length; ii++)
                 {
                     int idx = sequence[ii];
@@ -296,7 +319,7 @@ namespace cs_nn_fm
             } // end while(each epoch)
 
             var bestWeights = GetWeights();
-            System.Console.WriteLine("Finished training");
+            Console.WriteLine("Finished training");
             return bestWeights;
         }
 
