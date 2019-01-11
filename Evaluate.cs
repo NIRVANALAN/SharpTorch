@@ -30,5 +30,48 @@ namespace cs_nn_fm
 
             return sumSquaredErr / data.Length;
         } //Error
+
+        public static double SoftmaxAcc(Model model, Dataset testSet)
+        {
+        // percentage correct using winner-takes all
+        int numCorrect = 0;
+        int numWrong = 0;
+        var numInput = model.InputNum;
+        var numOutput = model.OutputNum;
+        var testData = testSet.DataSet;
+        double[] xValues = new double[numInput]; // inputs
+        double[] tValues = new double[numOutput]; // targets
+        double[] yValues; // computed Y
+
+            for (int i = 0; i<testData.Length; ++i)
+        {
+            Array.Copy(testData[i], xValues, numInput); // get x-values
+            Array.Copy(testData[i], numInput, tValues, 0, numOutput); // get t-values
+            yValues = model.Forward(xValues).PredictedValues;
+            int maxIndex = MaxIndex(yValues); // which cell in yValues has largest value?
+            int tMaxIndex = MaxIndex(tValues);
+
+            if (maxIndex == tMaxIndex)
+                ++numCorrect;
+            else
+                ++numWrong;
+        }
+        return (numCorrect* 1.0) / (numCorrect + numWrong);
+        }
+        private static int MaxIndex(double[] vector) // helper for SoftmaxAccy()
+        {
+            // index of largest value
+            int bigIndex = 0;
+            double biggestVal = vector[0];
+            for (int i = 0; i < vector.Length; ++i)
+            {
+                if (vector[i] > biggestVal)
+                {
+                    biggestVal = vector[i];
+                    bigIndex = i;
+                }
+            }
+            return bigIndex;
+        }
     }
 }

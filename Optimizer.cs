@@ -69,4 +69,16 @@ namespace cs_nn_fm
             Momentum = momentum;
         }
     }
+
+    public class BGD : Optimizer//TODO
+    {
+        public BGD(Model model, double lr) : base(model, lr)
+        {
+        }
+
+        public override void Step()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
