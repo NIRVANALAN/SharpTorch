@@ -140,6 +140,7 @@ namespace cs_nn_fm
             Array.Copy(oSums, _outputs, _outputs.Length);
             double[] resRes = new double[_numOutput];
             Array.Copy(_outputs, resRes, resRes.Length); // copy res_res to output[]
+            Console.WriteLine("output:"+_outputs[0]);
             return resRes;
         }
 

@@ -81,6 +81,7 @@ namespace cs_nn_fm
 //                    Console.WriteLine(i);
                     Helper.SplitInputOutput(data, out var inputData, out var outputData);
                     var yPred = model.Forward(inputData[0]); //xValue
+                    Console.WriteLine("framework output:"+yPred.PredictedValues[0]);
                     //compute and print loss
                     var loss = new RegressionLoss(yPred, outputData[0]); //tValue
                     //  Console.WriteLine(loss.Item()); // print loss
@@ -100,7 +101,7 @@ namespace cs_nn_fm
         static void Main(string[] args)
         {
             var program = new Program();
-            var sTrainData = new SinTrainData(10);
+            var sTrainData = new SinTrainData(5);
 //            var sTrainData = new SinTrainData(dataSet: new double[1][] {new double[] {1, Math.Sin(1)}},
 //                provideDataFlag: true);
             program.ManualPropSin(sTrainData, 1, false, InitialWeights: out var initialWeights,
