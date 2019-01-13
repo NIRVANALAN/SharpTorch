@@ -23,7 +23,8 @@ namespace cs_nn_fm
             Model = model;
             TargetValues = targetValues;
 //            Momentum = momentum;
-            PredictedValues = model.Nodes[model.Nodes.Length - 1];
+//            PredictedValues = model.Nodes[model.Nodes.Length - 1];
+            PredictedValues = model.Nodes[(model.Nodes.Length + 1)/2];
             Layers = model.Layers;
             foreach (var t in Layers) // init weights and signals
             {
@@ -79,7 +80,8 @@ namespace cs_nn_fm
                     continue;
                 }
 
-                if (Layers[i].GetType().BaseType != typeof(ActivationLayer)) // backward signal
+                var memberInfo = Layers[i].GetType().BaseType;
+                if (memberInfo != null && memberInfo.ToString() != typeof(ActivationLayer).ToString()) // backward signal
                     throw new Exception("Do not accept Propogation layer in activation layer position: " +
                                         Layers[i].GetType());
                 {
@@ -95,7 +97,7 @@ namespace cs_nn_fm
                         }
 
                         // signal
-                        var derivatives = cLayer.Differentiate(Model.Nodes[i][j]);
+                        var derivatives = cLayer.Differentiate(Model.Nodes[(i+1)/2][j]);
                         hiddenLayer.Signals[j] = sum * derivatives;
                     }
 

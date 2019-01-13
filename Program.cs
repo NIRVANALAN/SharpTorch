@@ -55,10 +55,13 @@ namespace cs_nn_fm
         public void RegressionUsingSGD(SinTrainData sinTrainData, bool shuffle_flag, int numEpochs,
             ref double[] initialWeights, out double[] finalWeights, bool provideInitialWeights = false)
         {
-            var inputLayer = new Linear(1, 12);
+            var inputLayer = new Linear(1, 13);
             var activationLayer1TanH = new HyperTan();
-            var hiddenLayer = new Linear(12, 1);
-            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer});
+            var hiddenLayer1 = new Linear(13, 13);
+            var activationLayer2TanH = new HyperTan();
+            var hiddenLayer2 = new Linear(13, 1);
+            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer1, activationLayer2TanH, hiddenLayer2});
+//            var model = new Model(new Layer[] {inputLayer, activationLayer1TanH, hiddenLayer2});
             if (provideInitialWeights)
             {
                 model.SetWeights(initialWeights);
@@ -132,7 +135,7 @@ namespace cs_nn_fm
 
         }
 
-        static void Main(string[] args)//TODO 加入新的两种训练方法
+        static void Main(string[] args)//TODO BGD
         {
             var epochNum = 1000;
             var program = new Program();
