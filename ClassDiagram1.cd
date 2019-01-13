@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="cs_nn_fm.Activation" Collapsed="true">
+    <Position X="17" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAIAABCAAAAAAAAAAAAAAAAEAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Activation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.DataLoader" Collapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAIKAEAgAAAQAAAAAAAAAQAAAAAAEAA=</HashCode>
+      <FileName>DataLoader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Dataset" Collapsed="true">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAgAIQAAAFAAgAAAAAAAgAABAA=</HashCode>
+      <FileName>Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.DataSet3D" Collapsed="true">
+    <Position X="5.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.DataSet2D" Collapsed="true">
+    <Position X="7.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.MyClass" Collapsed="true">
+    <Position X="20.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.SinTrainData" Collapsed="true">
+    <Position X="7.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Evaluate" Collapsed="true">
+    <Position X="20.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAQAA=</HashCode>
+      <FileName>Evaluate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Helper" Collapsed="true">
+    <Position X="17" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAQAAAAAAAAACAAAQAAAAAQAAAAAAAAAAAAAEAAg=</HashCode>
+      <FileName>Helper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Layer" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.ActivationLayer" Collapsed="true">
+    <Position X="6.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAQBAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.PropogationLayer" Collapsed="true">
+    <Position X="14.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAQBAAAAAAAAAAQAAAgEAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.HyperTan" Collapsed="true">
+    <Position X="1" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.ReLU" Collapsed="true">
+    <Position X="3.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Sigmoid" Collapsed="true">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.ELU" Collapsed="true">
+    <Position X="11.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.PRelu" Collapsed="true">
+    <Position X="10" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.ArcTan" Collapsed="true">
+    <Position X="12.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Linear" Collapsed="true">
+    <Position X="14.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Loss" Collapsed="true">
+    <Position X="1.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAwAAAAEACAAAAQEAAgAAAAAEIA=</HashCode>
+      <FileName>Loss.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.RegressionLoss" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Loss.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.MSELoss" Collapsed="true">
+    <Position X="2.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Loss.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Model" Collapsed="true">
+    <Position X="18.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACgAAAAABAAAgAAAEAUSAAAAABAAAQEAQAAAAAEAII=</HashCode>
+      <FileName>Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.nn" Collapsed="true">
+    <Position X="17" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAIAAAgIBAQAAAAAQQACEBAAAAAACIAAAAECAFAI=</HashCode>
+      <FileName>nn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Optimizer" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAEAAAAUIAgAAAAAAAA=</HashCode>
+      <FileName>Optimizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.SGD" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Optimizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Program" Collapsed="true">
+    <Position X="18.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AICAAAAAAAAAAAAAAEAAAAAAAAAAAAAAgAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.SoftMax" Collapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.Conv2D" Collapsed="true">
+    <Position X="22.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Layer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.SoftmaxLoss" Collapsed="true">
+    <Position X="7.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Loss.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cs_nn_fm.BGD" Collapsed="true">
+    <Position X="0.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Optimizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>
