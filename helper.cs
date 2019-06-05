@@ -50,7 +50,7 @@ namespace cs_nn_fm
 
             for (int i = 0; i < testRows; ++i)
                 testDataItems[i] = copy[i + trainRows];
-            var assembly = Assembly.GetExecutingAssembly(); // »ñÈ¡µ±Ç°³ÌÐò¼¯ 
+            var assembly = Assembly.GetExecutingAssembly(); // ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ 
 //            var type = allData.GetType();
 
             //parameters

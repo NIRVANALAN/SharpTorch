@@ -137,7 +137,7 @@ namespace cs_nn_fm
 
         static void Main(string[] args)//TODO BGD
         {
-            var epochNum = 1000;
+            var epochNum = 100;
             var program = new Program();
             var sTrainData = new SinTrainData(1000);
             var initialWeights = new double[1];//tmp
@@ -146,6 +146,7 @@ namespace cs_nn_fm
 //            Console.WriteLine("");
             program.RegressionUsingSGD(sTrainData, true, epochNum, initialWeights: ref initialWeights,
                 finalWeights: out var finalWeights);
+
         }
     }
 }

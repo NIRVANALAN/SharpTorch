@@ -26,7 +26,7 @@ namespace cs_nn_fm
             return x < 0 ? a * (Math.Pow(Math.E, x) - 1) : x;
         }
 
-        public static double HyperTan(double x) // hyperbolic tan£¬Ë«ÇúÕıÇĞ
+        public static double HyperTan(double x) // hyperbolic tanï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             if (x < -45)
                 return -1.0;
@@ -41,7 +41,7 @@ namespace cs_nn_fm
 
         public static double ArcTan(double x)
         {
-            //·´ÕıÇĞ
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             return Math.Atan(x);
         }
 
