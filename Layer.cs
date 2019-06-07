@@ -2,6 +2,7 @@
 
 namespace cs_nn_fm
 {
+
     public abstract class Layer
     {
     }
@@ -15,16 +16,42 @@ namespace cs_nn_fm
         public abstract double[] Calculate(ref double[] LayerSum, double a = 0.0);
     }
 
-    public abstract class PropogationLayer : Layer
+    public abstract class ConvLayer : Layer
+    {
+        // int in_channels, int out_channels, int kernel_size, int stride=1, int padding=0, int dilation=1,int group=1, bool bias=true,string padding_mode="zeros"
+        public int in_channels { get; set; }
+        public int out_channels { get; set; }
+        public int kernel_size { get; set; }
+        public int stride { get; set; } = 1;
+        public int padding { get; set; } = 0;
+        public int dilation { get; set; } = 1;
+        public bool bias { get; set; } = true;
+        public string padding_mode { get; set; } = "zeros";
+
+        public double[][,] Weights; // 3-d array
+        public double[][,] Grads;
+        public double[][] Signals; // error gradients signals
+        public double[][,] PrevWeightsDelta; //for momentum
+
+        protected ConvLayer(int inChannels,int outChannels)
+        {
+            in_channels = inChannels;
+            out_channels = outChannels;
+        }
+
+    }
+
+    public abstract class LinearLayer : Layer
     {
         public int DIn { get; set; }
         public int DOut { get; set; }
+        //public int 
         public double[,] Weights; // 2-d array to store Input-Output weights + biases
         public double[,] Grads;
         public double[] Signals; // error gradients signals
         public double[,] PrevWeightsDelta; //for momentum
 
-        protected PropogationLayer(int dIn, int dOut)
+        protected LinearLayer(int dIn, int dOut)
         {
             DIn = dIn;
             DOut = dOut;
@@ -169,12 +196,29 @@ namespace cs_nn_fm
         }
     }
 
-    // propogation layer below
-    class Conv2D // todo
-    {
 
+
+    // propogation layer below
+    class Conv2D : ConvLayer // todo
+    {
+        public Conv2D(int in_channels, int out_channels, int kernel_size, int stride=1, int padding=0, int dilation=1,int group=1, bool bias=true,string padding_mode="zeros" ):
+            base(in_channels, out_channels)
+        {
+            // kernel_num = out_channels, bias added， init needed
+            //var kernels_weight = new double[out_channels, kernel_size + 1, kernel_size];
+            for(var i = 0; i < out_channels; i++)
+            {
+                Weights[i] = Helper.MakeMatrix(kernel_size + 1, kernel_size);
+                Grads[i] = Helper.MakeMatrix(kernel_size + 1, kernel_size);
+                PrevWeightsDelta[i] = Helper.MakeMatrix(kernel_size + 1, kernel_size);
+                Signals[i] = new double[kernel_size];
+
+            }
+
+
+        }
     }
-    class Linear : PropogationLayer
+    class Linear : LinearLayer
     {
         public Linear(int numInput, int numOutput) : base(numInput, numOutput)
         {

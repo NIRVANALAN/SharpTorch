@@ -32,15 +32,15 @@ namespace cs_nn_fm
             Nodes = new double[layers.Length][];
             LayerSum = new double[layers.Length][];
             var flag = 1;
-            InputNum = ((PropogationLayer) layers[0]).DIn;
+            InputNum = ((LinearLayer) layers[0]).DIn;
             var propLayerIndex = 0;
             DIns = new int[layers.Length];
             DOuts = new int[layers.Length];
             foreach (var t in Layers) // check if the model is legal(propogation-Activation)
             {
-                if (flag == 1 && t.GetType().BaseType == typeof(PropogationLayer))
+                if (flag == 1 && t.GetType().BaseType == typeof(LinearLayer))
                 {
-                    var cLayer = (PropogationLayer) t;
+                    var cLayer = (LinearLayer) t;
                     flag = 1 - flag;
                     DOuts[propLayerIndex] = OutputNum = cLayer.DOut;
                     DIns[propLayerIndex] = cLayer.DIn;
@@ -72,8 +72,8 @@ namespace cs_nn_fm
 
             foreach (var t in Layers) // init the nodes
             {
-                if (t.GetType().BaseType != typeof(PropogationLayer)) continue;
-                var cLayer = (PropogationLayer) t;
+                if (t.GetType().BaseType != typeof(LinearLayer)) continue;
+                var cLayer = (LinearLayer) t;
                 if (Nodes[LayerNum] == null)
                 {
                     Nodes[LayerNum] = new double[cLayer.DIn + 1]; // add biases
@@ -120,7 +120,7 @@ namespace cs_nn_fm
                 {
                     for (int k = 0; k < DOuts[i]; k++)
                     {
-                        ((PropogationLayer) Layers[i * 2]).Weights[j, k] = initialWeights[w++];
+                        ((LinearLayer) Layers[i * 2]).Weights[j, k] = initialWeights[w++];
                     }
                 }
             }
@@ -136,7 +136,7 @@ namespace cs_nn_fm
                 {
                     for (int k = 0; k < DOuts[i]; k++)
                     {
-                        finalWeights[w++] = ((PropogationLayer) Layers[i * 2]).Weights[j, k];
+                        finalWeights[w++] = ((LinearLayer) Layers[i * 2]).Weights[j, k];
                     }
                 }
             }
@@ -172,9 +172,9 @@ namespace cs_nn_fm
 //            var activationNextFlag = false;
             foreach (var t in Layers)
             {
-                if (t.GetType().BaseType == typeof(PropogationLayer))
+                if (t.GetType().BaseType == typeof(LinearLayer))
                 {
-                    var cLayer = (PropogationLayer) t; // this is a Propogation Layer
+                    var cLayer = (LinearLayer) t; // this is a Propogation Layer
                     for (int j = 0;
                         j < Nodes[currentLayer + 1].Length - 1;
                         j++) //input-next-layer -1 to remove bias-node

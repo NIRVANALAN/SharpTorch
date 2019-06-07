@@ -23,9 +23,9 @@ namespace cs_nn_fm
         {
             for (int layerIndex = 0; layerIndex < Layers.Length - 1; layerIndex++)
             {
-                if (Layers[layerIndex].GetType() == typeof(PropogationLayer))
+                if (Layers[layerIndex].GetType() == typeof(LinearLayer))
                 {
-                    var cLayer = (PropogationLayer) Layers[layerIndex];
+                    var cLayer = (LinearLayer) Layers[layerIndex];
                     for (int i = 0; i < cLayer.DIn; i++)
                     {
                         for (int j = 0; j < cLayer.DOut; j++)
@@ -45,9 +45,9 @@ namespace cs_nn_fm
             //===========update begin here=========
             for (int layerIndex = 0; layerIndex < Layers.Length; layerIndex++)
             {
-                if (Layers[layerIndex].GetType().BaseType == typeof(PropogationLayer))
+                if (Layers[layerIndex].GetType().BaseType == typeof(LinearLayer))
                 {
-                    var cLayer = (PropogationLayer) Layers[layerIndex];
+                    var cLayer = (LinearLayer) Layers[layerIndex];
                     for (int i = 0; i < cLayer.DIn + 1; i++) //bug fix. bias weights not updated here
                     {
                         for (int j = 0; j < cLayer.DOut; j++)

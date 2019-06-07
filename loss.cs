@@ -28,8 +28,8 @@ namespace cs_nn_fm
             Layers = model.Layers;
             foreach (var t in Layers) // init weights and signals
             {
-                if (t.GetType().BaseType != typeof(PropogationLayer)) continue;
-                var cLayer = (PropogationLayer) t;
+                if (t.GetType().BaseType != typeof(LinearLayer)) continue;
+                var cLayer = (LinearLayer) t;
 //                cLayer.Weights = new double[cLayer.GetDIn()+1,cLayer.GetDOut()];
                 cLayer.Signals = new double[cLayer.DOut];
                 cLayer.PrevWeightsDelta = new double[cLayer.DIn + 1, cLayer.DOut]; // bias included
@@ -51,11 +51,11 @@ namespace cs_nn_fm
         {
             var currentLayerIndex = Layers.Length - 1; // for output layer
             // output activation function
-//            if (Layers[currentLayerIndex].GetType() == typeof(PropogationLayer))
+//            if (Layers[currentLayerIndex].GetType() == typeof(LinearPropogationLayer))
 //            {
 //                // no cost layer at output
 //                var derivative = 1.0; //dummy
-//                var cLayer = (PropogationLayer) Layers[currentLayerIndex];
+//                var cLayer = (LinearPropogationLayer) Layers[currentLayerIndex];
 //                for (int i = 0; i < cLayer.DOut; i++)
 //                {
 //                    cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
@@ -65,9 +65,9 @@ namespace cs_nn_fm
             //============compute signal and Grads=============
             for (var i = currentLayerIndex; i >= 0; i--) // from output-layer 
             {
-                if (Layers[i].GetType().BaseType == typeof(PropogationLayer)) // backward weights
+                if (Layers[i].GetType().BaseType == typeof(LinearLayer)) // backward weights
                 {
-                    var cLayer = (PropogationLayer) Layers[i];
+                    var cLayer = (LinearLayer) Layers[i];
                     for (var j = 0; j < cLayer.DIn + 1; j++) // add bias node here
                     {
                         for (var k = 0; k < cLayer.DOut; k++)
@@ -86,8 +86,8 @@ namespace cs_nn_fm
                                         Layers[i].GetType());
                 {
                     var cLayer = (ActivationLayer) Layers[i];
-                    var hiddenLayer = (PropogationLayer) Layers[i - 1];
-                    var outputLayer = (PropogationLayer) Layers[i + 1];
+                    var hiddenLayer = (LinearLayer) Layers[i - 1];
+                    var outputLayer = (LinearLayer) Layers[i + 1];
                     for (int j = 0; j < outputLayer.DIn; j++)
                     {
                         var sum = 0.0;
@@ -108,9 +108,9 @@ namespace cs_nn_fm
 //            //===========update should be via optimizer=========
 //            for (int layer_index = 0; layer_index < Layers.Length - 1; layer_index++)
 //            {
-//                if (Layers[layer_index].GetType() == typeof(PropogationLayer))
+//                if (Layers[layer_index].GetType() == typeof(LinearPropogationLayer))
 //                {
-//                    var cLayer = (PropogationLayer) Layers[layer_index];
+//                    var cLayer = (LinearPropogationLayer) Layers[layer_index];
 //                    for (int i = 0; i < cLayer.DIn; i++)
 //                    {
 //                        for (int j = 0; j < cLayer.DOut; j++)
@@ -148,11 +148,11 @@ namespace cs_nn_fm
         {
             var currentLayerIndex = Layers.Length - 1; // for output layer
             // output cost_function derivatives
-            if (Layers[currentLayerIndex].GetType().BaseType != typeof(PropogationLayer))
+            if (Layers[currentLayerIndex].GetType().BaseType != typeof(LinearLayer))
                 throw new Exception("Do not accept this type of Class here:" + Layers[currentLayerIndex].GetType());
             // Regression, no derivatives calculation....
             var derivative = 1.0; //dummy
-            var cLayer = (PropogationLayer) Layers[currentLayerIndex];
+            var cLayer = (LinearLayer) Layers[currentLayerIndex];
 //            for (int i = 0; i < cLayer.DOut; i++)
 //            {
             item = cLayer.Signals[0] = (PredictedValues[0] - TargetValues[0]) * derivative;
@@ -186,9 +186,9 @@ namespace cs_nn_fm
 
 
 //            var currentLayerIndex = Layers.Length - 1; // for output layer
-//            if (Layers[currentLayerIndex].GetType().BaseType != typeof(PropogationLayer))
+//            if (Layers[currentLayerIndex].GetType().BaseType != typeof(LinearPropogationLayer))
 //                throw new Exception("Do not accept this type of Class here:" + Layers[currentLayerIndex].GetType());
-//            var cLayer = (PropogationLayer) Layers[currentLayerIndex];
+//            var cLayer = (LinearPropogationLayer) Layers[currentLayerIndex];
 //            for (int i = 0; i < cLayer.DOut; i++)
 //            {
 //                var derivative = (1 - PredictedValues[i]) * PredictedValues[i];
