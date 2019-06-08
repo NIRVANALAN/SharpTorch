@@ -6,7 +6,12 @@ This project allow you to define the structure of your network in a layer by lay
 
 to support training, and backward propogation. You can apply this framework on your own regression and classification work in a rather simple way.
 
-## example ## 
+## Here is a form of the corresponding relationship between the components of neural network and the modules of our codes, to help you gain a better understanding. ##
+
+| component of NN | module of the code |
+| :-------------- | :----------------- |
+| yi              | er                 |
+## In the follow, we will give an example in regard to how to use this framework. ##
 Here we define a model
 ```
 var inputLayer = new Linear(1, 13);
