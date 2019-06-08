@@ -12,7 +12,7 @@ to support training, and backward propogation and other helper functions. You ca
 | :-------------- | :----------------- |
 
 
-## In the follow, we will give an example as regard to how to use this framework. ##
+## In the follow, we will give demos as regard to how to use this framework. ##
 Here we define a model
 ```
 var inputLayer = new Linear(1, 13);
