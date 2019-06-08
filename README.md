@@ -77,7 +77,10 @@ git clone https://github.com/leegolan/CSharp_NN_framework.git
 // Run program.cs to see the output :)
 ```
 Then, you can run the test case in program.cs, which use our framework to create several linear layers for predicting the value of Sin(X) out of X from training set.
----
+
+Here we post the screenshot of test case output:
+![output](https://github.com/leegolan/CSharp_NN_framework/blob/master/nn_output.png)
+We predict Sin(x) based on x and test acc is printed
 # The Team
 
 We write this framework out of our passion and love for deep learning & neutral network, which implemented common activation function and support regression and classification. Basically, the project is aiming at implementing simple but robust linear layer network, using forward and back-prop to train model.
