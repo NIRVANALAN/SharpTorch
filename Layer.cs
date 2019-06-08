@@ -231,4 +231,12 @@ namespace cs_nn_fm
             Signals = new double[DOut]; // gradients output signals
         }
     }
+
+    class Dropout: Layer
+    {
+        public Dropout(double p)
+        {
+
+        }
+    }
 }
