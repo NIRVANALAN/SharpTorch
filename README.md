@@ -67,14 +67,23 @@ while (epoch < numEpochs)
   }
 }
 ```
+## Installation
 ---
+### Check your C# version
+As C# is a cross-platform languge, you can run this code in both *nix & windows platform. Both .net core and .NET >=4.6 are supported.
+### Get the C#_NN_Framework Source
+```
+git clone https://github.com/leegolan/CSharp_NN_framework.git 
+// Run program.cs to see the output :)
+```
+Then, you can run the test case in program.cs, which use our framework to create several linear layers for predicting the value of Sin(X) out of X from training set.
+---
+# The Team
 
-This framework implemented common activation function and support regression and classification. 
-Optimization method including SGD and ADAM
-Run program.cs to see the output :)
-···
-program.RegressionUsingSGD(sTrainData, true, epochNum, initialWeights: ref initialWeights,
-    finalWeights: out var finalWeights);
-···
-Hope you will enjoy it
+We write this framework out of our passion and love for deep learning & neutral network, which implemented common activation function and support regression and classification. Basically, the project is aiming at implementing simple but robust linear layer network, using forward and back-prop to train model.
+
+This repo is designed, contributed and currently maintained by [YushiLAN](https://github.com/NIRVANALAN) and [XiaotongLi](https://github.com/yellowducklet). I think this repo can be a good beginner's guide to Neutral Network and DeepLearning, which concisely explained the math principle of forward&backward propgation. Dataloader and popular activation functions are also added, which we hope would help.
+
+# LICENSE
+This repo is MIT-style licensed, as found in the LICENSE file.
 
