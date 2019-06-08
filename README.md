@@ -50,7 +50,9 @@ while (epoch < numEpochs)
       optimizer.Step(); // update weights
   }
 }
-```            
+```
+---
+
 This framework implemented common activation function and support regression and classification. 
 Optimization method including SGD and ADAM
 Run program.cs to see the output :)
