@@ -94,7 +94,7 @@ namespace cs_nn_fm
 //                    Console.WriteLine(i);
                     Helper.SplitInputOutput(data, out var inputData, out var outputData);
                     var yPred = model.Forward(inputData[0]); //xValue
-//                    Console.WriteLine("framework output:" + yPred.PredictedValues[0]);
+//                    Console.WriteLine("framework output:" + yPred.PredictedLinearValues[0]);
                     //compute and print loss
                     var loss = new RegressionLoss(yPred, outputData[0]); //tValue
                     //  Console.WriteLine(loss.Item()); // print loss
@@ -108,7 +108,7 @@ namespace cs_nn_fm
 
 
             // test
-            var y = model.Forward(new[] {Math.PI}).PredictedValues;
+            var y = model.Forward(new[] {Math.PI}).PredictedLinearValues;
             Console.WriteLine("\nActual sin(PI) =  0.0   Predicted =  " + y[0].ToString("F6"));
         }
 

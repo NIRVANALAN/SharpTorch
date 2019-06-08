@@ -23,8 +23,8 @@ namespace cs_nn_fm
             Model = model;
             TargetValues = targetValues;
 //            Momentum = momentum;
-//            PredictedValues = model.Nodes[model.Nodes.Length - 1];
-            PredictedValues = model.Nodes[(model.Nodes.Length + 1)/2];
+//            PredictedLinearValues = model.Nodes[model.Nodes.Length - 1];
+            PredictedValues = model.LinearNodes[(model.LinearNodes.Length + 1)/2];
             Layers = model.Layers;
             foreach (var t in Layers) // init weights and signals
             {
@@ -58,7 +58,7 @@ namespace cs_nn_fm
 //                var cLayer = (LinearPropogationLayer) Layers[currentLayerIndex];
 //                for (int i = 0; i < cLayer.DOut; i++)
 //                {
-//                    cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
+//                    cLayer.Signals[i] = (PredictedLinearValues[i] - TargetValues[i]) * derivative;
 //                }
 //            } 
 
@@ -72,7 +72,7 @@ namespace cs_nn_fm
                     {
                         for (var k = 0; k < cLayer.DOut; k++)
                         {
-                            cLayer.Grads[j, k] = cLayer.Signals[k] * Model.Nodes[i / 2][j]; //  i/2:layer->hidden nodes
+                            cLayer.Grads[j, k] = cLayer.Signals[k] * Model.LinearNodes[i / 2][j]; //  i/2:layer->hidden nodes
                         }
                     } // calculate weightsGrad
 
@@ -97,7 +97,7 @@ namespace cs_nn_fm
                         }
 
                         // signal
-                        var derivatives = cLayer.Differentiate(Model.Nodes[(i+1)/2][j]);
+                        var derivatives = cLayer.Differentiate(Model.LinearNodes[(i+1)/2][j]);
                         hiddenLayer.Signals[j] = sum * derivatives;
                     }
 
@@ -191,8 +191,8 @@ namespace cs_nn_fm
 //            var cLayer = (LinearPropogationLayer) Layers[currentLayerIndex];
 //            for (int i = 0; i < cLayer.DOut; i++)
 //            {
-//                var derivative = (1 - PredictedValues[i]) * PredictedValues[i];
-//                cLayer.Signals[i] = (PredictedValues[i] - TargetValues[i]) * derivative;
+//                var derivative = (1 - PredictedLinearValues[i]) * PredictedLinearValues[i];
+//                cLayer.Signals[i] = (PredictedLinearValues[i] - TargetValues[i]) * derivative;
 //            }
 
 //            throw new NotImplementedException();

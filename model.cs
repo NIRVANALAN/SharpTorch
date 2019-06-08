@@ -8,15 +8,25 @@ namespace cs_nn_fm
         public int LayerNum;
         public double[][] LayerSum; // scratch array, should start from 1
 
-        public double[][] Nodes { get; }
+        public double[][] LinearNodes { get; }
+        public double [][,] ConvNodes { get; }
 
-//        public double[] XValues;
-        public double[] PredictedValues { get; set; }
-        public int InputNum { get; set; }
-        public int OutputNum { get; set; }
-        public int WeightsNum { get; set; }
-        public int[] DIns;
-        public int[] DOuts;
+        //        public double[] XValues;
+        public double[] PredictedLinearValues { get; set; }
+        public double[][,] PredictedConvValues { get; set; }
+
+        public int InputDimension { get; set; }
+        public int OutputDimension { get; set; }
+
+        public int LinearNodesWeightsNum { get; set; }
+        public int ConvNdoesWeightsNum { get; set; }
+
+        public int[] LinearDIns;
+        public int[] LInearDOuts;
+
+        public int[][,] ConvDIns;
+        public int[][,] ConvDOuts;
+
         public double[] InitialWeights;
         private double lo;
         private double hi;
@@ -29,21 +39,21 @@ namespace cs_nn_fm
             this.hi = hi;
             InitialWeights = weights;
             LayerNum = 0;
-            Nodes = new double[layers.Length][];
+            LinearNodes = new double[layers.Length][];
             LayerSum = new double[layers.Length][];
             var flag = 1;
-            InputNum = ((LinearLayer) layers[0]).DIn;
+            InputDimension = ((LinearLayer) layers[0]).DIn;
             var propLayerIndex = 0;
-            DIns = new int[layers.Length];
-            DOuts = new int[layers.Length];
+            LinearDIns = new int[layers.Length];
+            LInearDOuts = new int[layers.Length];
             foreach (var t in Layers) // check if the model is legal(propogation-Activation)
             {
                 if (flag == 1 && t.GetType().BaseType == typeof(LinearLayer))
                 {
                     var cLayer = (LinearLayer) t;
                     flag = 1 - flag;
-                    DOuts[propLayerIndex] = OutputNum = cLayer.DOut;
-                    DIns[propLayerIndex] = cLayer.DIn;
+                    LInearDOuts[propLayerIndex] = OutputDimension = cLayer.DOut;
+                    LinearDIns[propLayerIndex] = cLayer.DIn;
                     propLayerIndex++;
                     continue;
                 }
@@ -54,10 +64,10 @@ namespace cs_nn_fm
                 }
             }
 
-            WeightsNum = 0;
+            LinearNodesWeightsNum = 0;
             for (int i = 0; i < propLayerIndex; i++)
             {
-                WeightsNum += (DIns[i] + 1) * DOuts[i]; //bias
+                LinearNodesWeightsNum += (LinearDIns[i] + 1) * LInearDOuts[i]; //bias
             }
 
             //initialize weights
@@ -74,19 +84,19 @@ namespace cs_nn_fm
             {
                 if (t.GetType().BaseType != typeof(LinearLayer)) continue;
                 var cLayer = (LinearLayer) t;
-                if (Nodes[LayerNum] == null)
+                if (LinearNodes[LayerNum] == null)
                 {
-                    Nodes[LayerNum] = new double[cLayer.DIn + 1]; // add biases
-                    Nodes[LayerNum][cLayer.DIn] = 1; // for bias
+                    LinearNodes[LayerNum] = new double[cLayer.DIn + 1]; // add biases
+                    LinearNodes[LayerNum][cLayer.DIn] = 1; // for bias
                 }
 
-                if (Nodes[LayerNum].Length == cLayer.DIn + 1) // check the LastLayer.DOut==ThisLayer.Dint
+                if (LinearNodes[LayerNum].Length == cLayer.DIn + 1) // check the LastLayer.DOut==ThisLayer.Dint
                 {
                     LayerNum++;
 //                    cLayer.Weights = Helper.MakeMatrix(cLayer.DIn + 1, cLayer.DOut);
 //                    Helper.InitializeWeights(ref cLayer.Weights); // init weights
-                    Nodes[LayerNum] = new double[cLayer.DOut + 1];
-                    Nodes[LayerNum][cLayer.DOut] = 1; // for bias
+                    LinearNodes[LayerNum] = new double[cLayer.DOut + 1];
+                    LinearNodes[LayerNum][cLayer.DOut] = 1; // for bias
                     LayerSum[LayerNum] = new double[cLayer.DOut + 1];
 //                    LayerSum[LayerNum][cLayer.DOut] = 1; //for bias
                 }
@@ -100,7 +110,7 @@ namespace cs_nn_fm
         private void InitializeWeights(double lo = -0.001, double hi = 0.001, int rnd_seed = 1)
         {
             var rnd = new Random(rnd_seed);
-            InitialWeights = new double[WeightsNum];
+            InitialWeights = new double[LinearNodesWeightsNum];
             for (int i = 0; i < InitialWeights.Length; ++i)
                 InitialWeights[i] = (hi - lo) * rnd.NextDouble() + lo; // [-0.001 to +0.001] by default
             SetWeights(InitialWeights); //setWeights globally
@@ -108,17 +118,17 @@ namespace cs_nn_fm
 
         public void SetWeights(double[] initialWeights)
         {
-            if (WeightsNum != initialWeights.Length)
+            if (LinearNodesWeightsNum != initialWeights.Length)
             {
                 throw new Exception("Bad weights array in SetWeights");
             }
 
             var w = 0;
-            for (int i = 0; i < DIns.Length; i++)
+            for (int i = 0; i < LinearDIns.Length; i++)
             {
-                for (int j = 0; j < DIns[i] + 1; j++) //add bias
+                for (int j = 0; j < LinearDIns[i] + 1; j++) //add bias
                 {
-                    for (int k = 0; k < DOuts[i]; k++)
+                    for (int k = 0; k < LInearDOuts[i]; k++)
                     {
                         ((LinearLayer) Layers[i * 2]).Weights[j, k] = initialWeights[w++];
                     }
@@ -128,13 +138,13 @@ namespace cs_nn_fm
 
         public double[] GetWeights()
         {
-            var finalWeights = new double[WeightsNum];
+            var finalWeights = new double[LinearNodesWeightsNum];
             var w = 0;
-            for (int i = 0; i < DIns.Length; i++)
+            for (int i = 0; i < LinearDIns.Length; i++)
             {
-                for (int j = 0; j < DIns[i]+1; j++)
+                for (int j = 0; j < LinearDIns[i]+1; j++)
                 {
-                    for (int k = 0; k < DOuts[i]; k++)
+                    for (int k = 0; k < LInearDOuts[i]; k++)
                     {
                         finalWeights[w++] = ((LinearLayer) Layers[i * 2]).Weights[j, k];
                     }
@@ -155,15 +165,15 @@ namespace cs_nn_fm
                 }
             }
 
-            if (XValues.Length + 1 != Nodes[0].Length) //check input dimension
+            if (XValues.Length + 1 != LinearNodes[0].Length) //check input dimension
             {
-                throw new Exception("Input x_value not compatible");
+                throw new Exception("Input x_value dimension not compatible");
             }
 
             // copy x_input to nodes[0]
             for (int i = 0; i < XValues.Length; i++)
             {
-                Nodes[0][i] = XValues[i]; // nn input
+                LinearNodes[0][i] = XValues[i]; // nn input
             }
 
 //            nodes[0][x_values.Length] = 1; // have done above
@@ -176,19 +186,19 @@ namespace cs_nn_fm
                 {
                     var cLayer = (LinearLayer) t; // this is a Propogation Layer
                     for (int j = 0;
-                        j < Nodes[currentLayer + 1].Length - 1;
+                        j < LinearNodes[currentLayer + 1].Length - 1;
                         j++) //input-next-layer -1 to remove bias-node
                     {
-                        for (int i = 0; i < Nodes[currentLayer].Length; i++) //bias calculation included
+                        for (int i = 0; i < LinearNodes[currentLayer].Length; i++) //bias calculation included
                         {
-                            LayerSum[currentLayer + 1][j] += Nodes[currentLayer][i] * cLayer.Weights[i, j];
+                            LayerSum[currentLayer + 1][j] += LinearNodes[currentLayer][i] * cLayer.Weights[i, j];
                         }
                     }
 
                     currentLayer++; // point to next input-layer
 //                    activationNextFlag = !activationNextFlag; // should be true in next circulation, proving that ActivationFunc is needed next
-                    Nodes[currentLayer] = LayerSum[currentLayer]; // avoid no cost function after (in regression)
-                    Nodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
+                    LinearNodes[currentLayer] = LayerSum[currentLayer]; // avoid no cost function after (in regression)
+                    LinearNodes[currentLayer][cLayer.DOut] = 1; //should be 1,for bias
                     continue;
                 }
 
@@ -198,12 +208,12 @@ namespace cs_nn_fm
                 {
                     var cLayer = (ActivationLayer) t;
                     // polymorphism calculate activation
-                    Nodes[currentLayer] = cLayer.Calculate(ref LayerSum[currentLayer]);
-                    Nodes[currentLayer][Nodes[currentLayer].Length - 1] = 1; //should be 1,for bias
+                    LinearNodes[currentLayer] = cLayer.Calculate(ref LayerSum[currentLayer]);
+                    LinearNodes[currentLayer][LinearNodes[currentLayer].Length - 1] = 1; //should be 1,for bias
                 }
             } // forward finish
 
-            PredictedValues = Nodes[currentLayer]; // store for later use
+            PredictedLinearValues = LinearNodes[currentLayer]; // store for later use
             return this; //result
         }
     }

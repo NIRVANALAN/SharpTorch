@@ -11,8 +11,8 @@ namespace cs_nn_fm
 //            var data = model.Nodes;
 //            均方方差
             var sumSquaredErr = 0.0;
-            var inputNum = model.InputNum;
-            var outputNum = model.OutputNum;
+            var inputNum = model.InputDimension;
+            var outputNum = model.OutputDimension;
             var xValues = new double[inputNum];
             var tValues = new double[outputNum]; // output y(last num_output vals in train_data)
             var data = testSet.DataSet;
@@ -20,7 +20,7 @@ namespace cs_nn_fm
             {
                 Array.Copy(data[i], xValues, inputNum);
                 Array.Copy(data[i], inputNum, tValues, 0, outputNum);
-                var yValues = model.Forward(xValues).PredictedValues; // get PredictedValues from current weights
+                var yValues = model.Forward(xValues).PredictedLinearValues; // get PredictedLinearValues from current weights
                 for (int j = 0; j < outputNum; j++)
                 {
                     var err = tValues[j] - yValues[j]; // calc
@@ -36,8 +36,8 @@ namespace cs_nn_fm
         // percentage correct using winner-takes all
         int numCorrect = 0;
         int numWrong = 0;
-        var numInput = model.InputNum;
-        var numOutput = model.OutputNum;
+        var numInput = model.InputDimension;
+        var numOutput = model.OutputDimension;
         var testData = testSet.DataSet;
         double[] xValues = new double[numInput]; // inputs
         double[] tValues = new double[numOutput]; // targets
@@ -47,7 +47,7 @@ namespace cs_nn_fm
         {
             Array.Copy(testData[i], xValues, numInput); // get x-values
             Array.Copy(testData[i], numInput, tValues, 0, numOutput); // get t-values
-            yValues = model.Forward(xValues).PredictedValues;
+            yValues = model.Forward(xValues).PredictedLinearValues;
             int maxIndex = MaxIndex(yValues); // which cell in yValues has largest value?
             int tMaxIndex = MaxIndex(tValues);
 

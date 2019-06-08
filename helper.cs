@@ -197,28 +197,28 @@ namespace cs_nn_fm
             double inputLow = -10, double inputHigh = 10.0)
         {
             Random rnd = new Random(seed);
-            int weightsNum = model.WeightsNum;
+            int weightsNum = model.LinearNodesWeightsNum;
 
             double[][] result = new double[numRows][]; // allocate return-result
             for (int i = 0; i < numRows; ++i)
-                result[i] = new double[model.InputNum + model.OutputNum]; // 1-of-N in last column
+                result[i] = new double[model.InputDimension + model.OutputDimension]; // 1-of-N in last column
 
             for (int r = 0; r < numRows; ++r) // for each row
             {
                 // generate random inputs
-                double[] inputs = new double[model.InputNum];
+                double[] inputs = new double[model.InputDimension];
                 for (int i = 0; i < inputs.Length; ++i)
                     inputs[i] = (inputHigh-inputLow)* rnd.NextDouble() +inputLow; // [-10.0 to -10.0] by default
 
                 // compute outputs
-                double[] outputs = model.Forward(inputs).PredictedValues;
+                double[] outputs = model.Forward(inputs).PredictedLinearValues;
 
                 // translate outputs to 1-of-N. Especially for classification
-                double[] oneOfN = new double[model.OutputNum]; // all 0.0
+                double[] oneOfN = new double[model.OutputDimension]; // all 0.0
 
                 var maxIndex = 0;
                 var maxValue = outputs[0];
-                for (var i = 0; i < model.OutputNum; ++i)
+                for (var i = 0; i < model.OutputDimension; ++i)
                 {
                     if (!(outputs[i] > maxValue)) continue;
                     maxIndex = i;
@@ -229,9 +229,9 @@ namespace cs_nn_fm
 
                 // place inputs and 1-of-N output values into curr row
                 int c = 0; // column into result[][]
-                for (int i = 0; i < model.InputNum; ++i) // inputs
+                for (int i = 0; i < model.InputDimension; ++i) // inputs
                     result[r][c++] = inputs[i];
-                for (int i = 0; i < model.OutputNum; ++i) // outputs
+                for (int i = 0; i < model.OutputDimension; ++i) // outputs
                     result[r][c++] = oneOfN[i];
             } // each row
 
