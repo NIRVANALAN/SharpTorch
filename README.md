@@ -6,11 +6,18 @@ This project allow you to define the structure of your network in a layer by lay
 
 to support training, and backward propogation and other helper functions. You can apply this framework on your own regression and classification work in a rather simple way.
 
-## Here is a form of the corresponding relationship between the components of neural network and the modules of our codes, to help you gain a better understanding. ##
+## Here is a form of succinct description to what functions all the modules of our codes perform. Hope it will help you gain a better understanding of this framework. ##
 
-| component of NN | module of the code |
-| :-------------- | :----------------- |
-
+| Component                          | Description                                                                                                                                                                |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DataLoader.cs, Dataset.cs, help.cs | Load dataset and perform data pre-process like shuffle, split training set, dev set and test set, initialize weight matrices and so on.                                    |
+| Evaluate.cs                        | Define cost functions, you can add your own codes regarding evaluation of the performance of models here.                                                                  |
+| layer.cs                           | Define the structure of each layer and the activation function of each layer such as Relu, L-Relu, sigmoid, tanh and so on. We also plan to implement drop out later here. |
+| loss.cs                            | Define the calculation function to compute loss on training sets.                                                                                                          |
+| model.cs                           | Aggregate all layers defined previously, implement the complete forward propogation and backward propogation.                                                              |
+| NN.cs                              | Implement the whole process of training.                                                                                                                                   |
+| Optimizer.cs                       | Define different ways to optimize the final result.                                                                                                                        |
+| Program.cs                         | A test case to validify that our program is useful.                                                                                                                        |
 
 ## In the follow, we will give demos as regard to how to use this framework. ##
 Here we define a model
@@ -70,3 +77,4 @@ program.RegressionUsingSGD(sTrainData, true, epochNum, initialWeights: ref initi
     finalWeights: out var finalWeights);
 ···
 Hope you will enjoy it
+
