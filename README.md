@@ -1,10 +1,10 @@
 # CSharp_NN_framework
-This project allow you to define the structure of your network in a layer by layer manner, and you can choose what activation function to use per layer. We implemented forward propogation, cost function like 
+This project allow you to define the structure of your network in a layer by layer manner, and you can choose what activation function to use per layer. We implemented forward propogation, cost function such as 
 - MSE
 - SoftMax 
 
 
-to support training, and backward propogation. You can apply this framework on your own regression and classification work in a rather simple way.
+to support training, and backward propogation and other helper functions. You can apply this framework on your own regression and classification work in a rather simple way.
 
 ## Here is a form of the corresponding relationship between the components of neural network and the modules of our codes, to help you gain a better understanding. ##
 
