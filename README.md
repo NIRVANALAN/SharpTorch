@@ -1,6 +1,6 @@
 # CSharp_NN_framework
 This project allow you to define the structure of your network in a layer by layer manner, and you can choose what activation function to use per layer. We implemented forward propogation, backward propogation and cost function. 
-## example ##
+## example ## 
 Here we define a model
 ```
 var inputLayer = new Linear(1, 13);
