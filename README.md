@@ -1,4 +1,4 @@
-# CSharp_NN_framework
+# SharpTorch
 This project allow you to define the structure of your network in a layer by layer manner, and you can choose what activation function to use per layer. We implemented forward propogation, cost function such as 
 - MSE
 - SoftMax 
